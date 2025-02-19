@@ -1,0 +1,6 @@
+/* styles.css */
+.custom-hover-btn:hover {
+    background-color: #F25C05 !important; /* Color naranja */
+    color: white !important; /* Cambia el color del texto a blanco */
+    border-color: #F25C05 !important; /* Cambia el color del borde a naranja */
+  }

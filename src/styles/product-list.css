@@ -1,0 +1,36 @@
+.product-container {
+    max-height: 80vh; /* Ajusta la altura según tu necesidad */
+    overflow-y: auto; /* Agrega scroll si los productos exceden la altura */
+    background: white;
+    padding: 0 !important;
+}
+
+  /* Scroll personalizado */
+.product-container::-webkit-scrollbar {
+    width: 10px; /* Grosor del scroll */
+}
+
+.product-container::-webkit-scrollbar-track {
+    background: #f5f5f5; /* Color del fondo del scroll */
+    border-radius: 10px;
+}
+
+.product-container::-webkit-scrollbar-thumb {
+    background: #F25C05; /* Color naranja del scroll */
+    border-radius: 10px;
+    border: 2px solid #f5f5f5; /* Borde del scroll para hacerlo más delgado */
+}
+
+.product-container::-webkit-scrollbar-thumb:hover {
+    background: #F25C05; /* Un tono más oscuro al hacer hover */
+}
+
+.list-item{
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between;
+}
+
+.list-item:hover{
+    border-color: #F25C05 !important;
+}
