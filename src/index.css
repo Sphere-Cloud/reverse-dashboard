@@ -112,11 +112,19 @@ strong, b {
 
 /*Secondary*/
 
-.btn-secondary {
-  background: black !important;
-  border: 1px solid black !important;
+.btn-primary {
+  background: #F25C05 !important;
+  border: 1px solid #F25C05 !important;
   font-size: 12px !important;
   color: white !important;
+  cursor: pointer !important;
+}
+
+.btn-secondary {
+  background: transparent !important;
+  border: 1px solid #F25C05 !important;
+  font-size: 12px !important;
+  color: #F25C05 !important;
   cursor: pointer !important;
 }
 

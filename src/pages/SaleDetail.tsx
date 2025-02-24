@@ -81,16 +81,16 @@ const SaleDetail = () => {
 ];
 
 const prevSale = () => {
-    const prevId = saleData.id - 1;
-    if (prevId > 0) {
-      navigate(`/ventas/${prevId}`);
-    }
-  };
+const prevId = saleData.id - 1;
+  if (prevId > 0) {
+    navigate(`/ventas/${prevId}`);
+  }
+};
 
-  const nextSale = () => {
-    const nextId = saleData.id + 1;
-    navigate(`/ventas/${nextId}`);
-  };
+const nextSale = () => {
+  const nextId = saleData.id + 1;
+  navigate(`/ventas/${nextId}`);
+};
 
   // Función para calcular la posición X para justificar a la derecha
 const getRightAlignX = (doc, text, marginRight = 2, pageWidth = 80) => {

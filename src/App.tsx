@@ -10,7 +10,6 @@ import Login from './pages/Login';
 import PointOfSale from './pages/PointOfSale';
 import SaleDetail from './pages/SaleDetail';
 import CashOut from './pages/CashOut';
-import UserDetail from './pages/UserDetail';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 

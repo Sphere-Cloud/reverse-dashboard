@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navbar, Container, Button } from 'react-bootstrap';
 import { FaUserCircle, FaExpand, FaBars } from 'react-icons/fa'; // Íconos de FontAwesome
 import Sidebar from './Sidebar';
+import axios from "axios";
 
 import '../styles/custom-navbar.css';
 
@@ -15,9 +16,11 @@ const toTitleCase = (str) => {
     .join(' '); // Une las palabras con espacios
 };
 
-const CustomNavbar = ({ username = 'Josafat', userRole = 'Programador', actions}) => {
+const CustomNavbar = ({actions}) => {
   // Función para abrir el Sidebar
   const [showSidebar, setShowSidebar] = useState(false);
+  const [userRole, setUserRole] = useState(""); // Estado para el rol del usuario
+  const [username, setUsername] = useState(""); // Estado para el nombre de usuario
 
   // Función para abrir el Sidebar
   const handleShowSidebar = () => setShowSidebar(true);
@@ -27,6 +30,7 @@ const CustomNavbar = ({ username = 'Josafat', userRole = 'Programador', actions}
 
   const currentPath = toTitleCase(decodeURIComponent(location.pathname.replace(/^\/|\/$/g, '')));
   const firstSegment = currentPath.split('/')[0];
+  document.title = `Revrse - ${firstSegment}`;
 
   // Función para activar el modo pantalla completa
   const handleFullscreen = () => {
@@ -36,6 +40,37 @@ const CustomNavbar = ({ username = 'Josafat', userRole = 'Programador', actions}
       document.documentElement.requestFullscreen(); // Entrar en pantalla completa
     }
   };
+
+  // Obtener el rol del usuario desde el localStorage o desde la API
+  useEffect(() => {
+    const getRoleFromId = async () => {
+      const userRoleId = localStorage.getItem("user_role_id");
+      
+      if (!localStorage.getItem("user_role")) {
+        try {
+          // Espera la respuesta de la solicitud
+          const response = await axios.get(`http://localhost:8080/roles/${userRoleId}`);
+          
+          // Guardar el role_id en el localStorage
+          localStorage.setItem("user_role", JSON.stringify(response.data.title));
+          setUserRole(response.data.title); // Actualiza el estado con el rol obtenido
+        } catch (error) {
+          console.error("Error obteniendo el rol del usuario:", error);
+          setUserRole(""); // En caso de error, establece el rol como vacío
+        }
+      } else {
+        // Obtener el rol desde localStorage si existe
+        setUserRole(JSON.parse(localStorage.getItem("user_role") || ""));
+      }
+    };
+
+    getRoleFromId();
+    setUsername(
+      (JSON.parse(localStorage.getItem("user_name") || "")) + " " +
+      (JSON.parse(localStorage.getItem("user_lastname") || ""))
+    );
+    
+  }, []); // Solo se ejecuta una vez al cargar el componente
 
   return (
     <>
@@ -89,7 +124,6 @@ const CustomNavbar = ({ username = 'Josafat', userRole = 'Programador', actions}
           </div>
         </Container>
       </Navbar>
-
     </>
   );
 };
