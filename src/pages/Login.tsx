@@ -37,7 +37,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/login", credentials);
+      const response = await axios.post("http://78.13.0.202:8080/login", credentials);
       
       if (response.status === 200) {
         localStorage.setItem("user_name", JSON.stringify(response.data.usuario.name));

@@ -49,7 +49,7 @@ const CustomNavbar = ({actions}) => {
       if (!localStorage.getItem("user_role")) {
         try {
           // Espera la respuesta de la solicitud
-          const response = await axios.get(`http://localhost:8080/roles/${userRoleId}`);
+          const response = await axios.get(`http://78.13.0.202:8080/roles/${userRoleId}`);
           
           // Guardar el role_id en el localStorage
           localStorage.setItem("user_role", JSON.stringify(response.data.title));
