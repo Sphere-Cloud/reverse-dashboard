@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import CustomNavbar from "../components/CustomNavbar";
 import CustomToast from "../components/CustomToast";
 import Loading from "../components/Loading";
@@ -25,7 +25,7 @@ export default function Settings() {
     return <Loading />;
   }
 
-  const handleFormSubmit = async (event) => {
+  const handleFormSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.target);
 

@@ -11,143 +11,310 @@ import logo from '/reverse.png';
 import LoadingSecondary from '../components/LoadingSecondary';
 import axios from 'axios';
 
+// Definición de tipos
+interface Product {
+  id: number;
+  company_id: number | null;
+  category_id: number | null;
+  description: string;
+  unit_measurement?: string;
+  picture?: Uint8Array; 
+  created_at: Date;
+  updated_at: Date;
+  barcode?: string;
+  is_active: boolean;
+}
+
+interface Inventory {
+  id: number;
+  company_id: number | null;
+  batch_id?: number;
+  batch_name?: string;
+  product_id: number;
+  quantity: number;
+  price_sale: number;
+  price_purchase: number;
+  created_by: number | null;
+  created_at: Date;
+  updated_by: number | null;
+  updated_at: Date;
+  is_active: boolean;
+}
+
+interface Sale {
+  id: number;
+  company_id: number;
+  shift_id?: number | null;  // Puede ser null
+  payment_method: string;
+  subtotal: number;
+  total: number;
+  comment?: string | null;   // Puede ser null
+  created_at: string;        // ISO string (Ej: "2024-02-24T12:34:56Z")
+  updated_at: string;
+  is_active: boolean;
+}
+
+
+interface CartItem {
+  product: Product,
+  inventory: Inventory,
+  quantity: number
+}
+
+interface PaymentMethod {
+  method: string;
+  amount: string;
+}
+
+interface TicketData {
+  companyName: string;
+  address: string;
+  postalCode: string;
+  phoneNumber: string;
+  seller: string;
+  ticketNumber: string;
+  date: string;
+  clientNumber: string;
+  clientName: string;
+  subtotalAmount: string;
+  discountAmount: string;
+  taxesAmount: string;
+  totalAmount: string;
+  paymentAmount: string;
+  changeAmount: string;
+  cashAmount: string;
+  website: string;
+  products: CartItem[];
+}
 
 const PointOfSale = () => {
+
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
-  
-  const [cart, setCart] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
 
-  // Lista de productos (puedes obtenerla de una API o mantenerla estática)
-  const [ products, setProducts ] = useState([]);
-  
-  // Obtener el rol del usuario desde el localStorage o desde la API
-  useEffect(() => {
-    
-    const fetchProducts = async () => {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isPaying, setIsPaying] = useState<boolean>(false);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
+    { method: '', amount: '' },
+  ]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+    // Obtener productos desde la API
+    useEffect(() => {
+      const fetchProducts = async () => {
         try {
-            // Espera la respuesta de la solicitud
-            const response = await axios.get(`http://78.13.0.202:8080/products/`);
-
-            if (response.data == null) {
-                setProducts([]);
-            } else {
-                setProducts(response.data);
-            }
-        } catch (error) {
-            console.error("Error obteniendo el rol del usuario:", error);
+          const response = await axios.get(`http://78.13.0.202:8080/products`);
+          if (response.data == null) {
             setProducts([]);
+          } else {
+            setProducts(response.data);
+          }
+
+        } catch (error) {
+          console.error("Error obteniendo los productos:", error);
+          setProducts([]);
         }
+      };
+  
+      fetchProducts();
+    }, []);
+
+
+  
+    // Filtrar productos según el término de búsqueda
+    const filteredProducts = () => {
+      if (searchTerm === '') return [];
+      return products.filter((product) =>
+        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    };
+  
+    // Agregar producto al carrito
+    const addToCart = (cartItem: CartItem) => {
+      const productIndex = cart.findIndex((item) => item.product.id === cartItem.product.id);
+      if (productIndex !== -1) {
+        const updatedCart = [...cart];
+        updatedCart[productIndex].quantity += 1;
+        setCart(updatedCart);
+      } else {
+        setCart([...cart, { ...cartItem, quantity: 1 }]);
+      }
+    };
+  
+    // Aumentar cantidad de un producto en el carrito
+    const increaseQuantity = (productId: number) => {
+      const updatedCart = cart.map((item) =>
+        item.product.id === productId ? { ...item, quantity: item.quantity + 1 } : item
+      );
+      setCart(updatedCart);
+    };
+  
+    // Disminuir cantidad de un producto en el carrito
+    const decreaseQuantity = (productId: number) => {
+      const updatedCart = cart
+        .map((item) => {
+          if (item.product.id === productId) {
+            if (item.quantity > 1) {
+              return { ...item, quantity: item.quantity - 1 };
+            } else {
+              return null;
+            }
+          }
+          return item;
+        })
+        .filter(Boolean) as CartItem[];
+      setCart(updatedCart);
+    };
+  
+    // Eliminar producto del carrito
+    const removeFromCart = (index: number) => {
+      const newCart = cart.filter((_, i) => i !== index);
+      setCart(newCart);
+    };
+  
+    // Calcular el total del carrito
+    const calcTotal = () => {
+      return cart.reduce((sum, item) => sum + item.inventory.price_sale * item.quantity, 0);
     };
 
-    // Llama a la función asíncrona
-    fetchProducts();
-    
-  }, []); // Solo se ejecuta una vez al cargar el componente
+    const [yourPayment, setYourPayment] = useState(0);
+    const [yourChange, setYourChange] = useState(0);
 
+    const handlePaymentChange = () => {
+      // Calcular el total del pago
+      const totalPayment = paymentMethods.reduce((sum, payment) => {
+        return sum + (parseFloat(payment.amount) || 0);
+      }, 0);
 
-  // Filtrar productos según el término de búsqueda
-  const filteredProducts = () => {
-    if ( searchTerm == '' ) return [];
+      // Calcular el cambio
+      const exchange = totalPayment - calcTotal();
 
-    return products.filter((product) =>    
-      product.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
-
-  const addToCart = (product) => {
-    const productIndex = cart.findIndex((item) => item.id === product.id);
-    
-    if (productIndex !== -1) {
-      const updatedCart = [...cart];
-      updatedCart[productIndex].quantity += 1;
-      setCart(updatedCart);
-    } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      // Actualizar los estados
+      setYourPayment(totalPayment);
+      setYourChange(exchange);
     }
-  };
-
-  // Función para aumentar la cantidad de un producto en el carrito
-  const increaseQuantity = (productId) => {
-    const updatedCart = cart.map((item) =>
-      item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    setCart(updatedCart);
-  };
-
-  // Función para disminuir la cantidad de un producto en el carrito
-  const decreaseQuantity = (productId) => {
-    const updatedCart = cart.map((item) => {
-      if (item.id === productId) {
-        // Si la cantidad es mayor que 1, restar 1
-        if (item.quantity > 1) {
-          return { ...item, quantity: item.quantity - 1 };
-        } else {
-          // Si la cantidad es 1, eliminar el producto del carrito
-          return null;
-        }
-      }
-      return item;
-    }).filter(Boolean); // Filtrar para eliminar los valores null
-    setCart(updatedCart);
-  };
-
   
+    // Cambiar método de pago
+    const handleMethodChange = (index: number, e: React.ChangeEvent<any>) => {
+          const newPaymentMethods = [...paymentMethods];
+          newPaymentMethods[index].method = e.target.value;
+          setPaymentMethods(newPaymentMethods);
+        };
+  
+    // Cambiar cantidad de pago
+    const handleAmountChange = (index: number, e: React.ChangeEvent<any>) => {
+      const newPaymentMethods = [...paymentMethods];
+      newPaymentMethods[index].amount = e.target.value;
+      setPaymentMethods(newPaymentMethods);
+    };
+  
+    // Agregar método de pago
+    const addPaymentMethod = () => {
+      setPaymentMethods([...paymentMethods, { method: '', amount: '' }]);
+    };
 
-  const removeFromCart = (index) => {
-    const newCart = cart.filter((_, i) => i !== index);
-    setCart(newCart);
-  };
+    useEffect(() => {
+      handlePaymentChange();
+    }, [paymentMethods]);
+  
+    // Finalizar pago
+    const handleFinishPayment = async () => {
+      setLoading(true);
+      try {
+        saveData();
+      } catch (error) {
+        console.error("Error al finalizar el pago:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    // Reiniciar estado
+    const reset = () => {
+      setIsPaying(false);
+      setCart([]);
+      setPaymentMethods([{ method: '', amount: '' }]);
+    };
 
-  const [isPaying, setIsPaying] = useState(false);
+    const saveData = async () => {
+      try {
+        const companyId = localStorage.getItem("user_company_id");
+        const parsedCompanyId = companyId ? parseFloat(JSON.parse(companyId)) : null;
+    
+        if (!parsedCompanyId) {
+          console.error("Invalid company_id");
+          return;
+        }
+    
+        const salePayload = {
+          company_id: parsedCompanyId,
+          shift_id: 1,
+          payment_method: "debit",
+          subtotal: calcTotal(),
+          total: calcTotal(),
+          comment: "",
+          is_active: true,
+        };
+    
+        const saleResponse = await axios.post("http://78.13.0.202:8080/sales", salePayload);
+        const sale = saleResponse.data;
+    
+
+        console.log("Venta registrada: ", sale)
+    
+        if (cart.length === 0) {
+          console.warn("El carrito está vacío. No se guardarán productos.");
+          return;
+        }
+    
+        const productRequests = cart.map(async (item) => {
+          const productPayload = {
+            product_id: item.product.id,
+            sale_id: sale.id,
+            sale_price: item.inventory.price_sale,
+            purchase_price: item.inventory.price_purchase,
+            quantity: item.quantity,
+            is_active: true,
+          };
+    
+          return axios.post("http://78.13.0.202:8080/sale-products", productPayload);
+        });
+    
+        const productResponses = await Promise.all(productRequests);
+        const savedProducts = productResponses.map((response) => response.data);
+    
+        console.log("Productos guardados exitosamente:", savedProducts);
+        printSale(sale);
+      } catch (error) {
+        console.error("Error al guardar la venta o los productos:", error);
+      }
+    };
+    
   
   const handlePayment = () => {
     setIsPaying(!isPaying);
   };
 
-  const calcTotal = () => {
-    return cart.reduce((sum, item) => sum + parseFloat(item.price), 0)
-  };
-
-
-  const [paymentMethods, setPaymentMethods] = useState([
-    { method: '', amount: '' },
-  ]);
-
-  const handleMethodChange = (index, e) => {
-    const newPaymentMethods = [...paymentMethods];
-    newPaymentMethods[index].method = e.target.value;
-    setPaymentMethods(newPaymentMethods);
-  };
-
-  const handleAmountChange = (index, e) => {
-    const newPaymentMethods = [...paymentMethods];
-    newPaymentMethods[index].amount = e.target.value;
-    setPaymentMethods(newPaymentMethods);
-  };
-
-  const addPaymentMethod = () => {
-    setPaymentMethods([...paymentMethods, { method: '', amount: '' }]);
-  };
-
 
   // Función para calcular la posición X para justificar a la derecha
-  const getRightAlignX = (doc, text, marginRight = 2, pageWidth = 80) => {
+  const getRightAlignX = (doc: jsPDF, text: string, marginRight = 2, pageWidth = 80) => {
     const textWidth = doc.getTextWidth(text); // Medir el ancho del texto
     return pageWidth - textWidth - marginRight; // Posición X para alinear a la derecha
   };
 
   // Función para calcular la posición X para centrar el texto
-  const getCenterAlignX = (doc, text, pageWidth = 80) => {
+  const getCenterAlignX = (doc: jsPDF, text: string, pageWidth = 80) => {
     const textWidth = doc.getTextWidth(text); // Medir el ancho del texto
     return (pageWidth - textWidth) / 2; // Posición X para centrar el texto
   };
 
-  const generateTicket = (data) => {
+  const generateTicket = (data: TicketData) => {
     const doc = new jsPDF("p", "mm", [80, 297]); // Ancho de 80mm, Alto ajustable (similar a un A4)
   
     const imageWidth = 30; // Ancho de la imagen
@@ -237,10 +404,10 @@ const PointOfSale = () => {
     yPosition += 5;
   
     // Detalles de los productos
-    data.products.forEach((product, index) => {
-      const productText = `${product.cantidad}.00 - `;
-      const skuText = `${product.sku}`;
-      const descriptionText = ` ${product.descripcion}`;
+    data.products.forEach((cartItem) => {
+      const productText = `${cartItem.quantity.toFixed(2)}` + " - ";
+      const skuText = `${cartItem.product.id}`;
+      const descriptionText = ` ${cartItem.product.description}`;
   
       // Mostrar cantidad y guion
       doc.text(productText, 2, yPosition);
@@ -254,7 +421,7 @@ const PointOfSale = () => {
       doc.text(descriptionText, doc.getTextWidth(productText + skuText) + 4, yPosition);
   
       // Mostrar precio alineado a la derecha
-      const totalProduct = `$${product.precioTotal.toFixed(2)}`;
+      const totalProduct = `${cartItem.inventory.price_sale.toFixed(2)}`;
       const xPositionTotalProduct = getRightAlignX(doc, totalProduct);
       doc.text(totalProduct, xPositionTotalProduct, yPosition); 
   
@@ -317,61 +484,48 @@ const PointOfSale = () => {
     doc.save(`${data.ticketNumber}.pdf`);
   };
   
-  const printSale = () => {
-
+  const printSale = (data: Sale) => {
+    if (!data || cart.length === 0) {
+      console.error("No hay datos de venta o carrito para imprimir.");
+      return;
+    }
+  
+    const company_name = JSON.parse(localStorage.getItem("user_company_name") || '""');
+    const user = (JSON.parse(localStorage.getItem("user_name") || "")) + " " +
+      (JSON.parse(localStorage.getItem("user_lastname") || ""));
+  
     const ticketData = {
-      companyName: "WWW.FIXOEM.COM",
+      companyName: company_name,
       address: "Av. Benito Juarez 100 Centro",
       postalCode: "CP. 22000 Tijuana Baja California Norte",
       phoneNumber: "(771) 4834386",
-      seller: "JOSAFAT GARCIA",
-      ticketNumber: "232323",
-      date: "17/17/2025 19:04",
-      clientNumber: "1323242",
-      clientName: "MARCOS ALBERTO",
-      subtotalAmount: "$00.00",
+      seller: user,
+      ticketNumber: `${data.id}`,
+      date: `${data.created_at}`,
+      clientNumber: "", // pending
+      clientName: "", // pending
+      subtotalAmount: `${data.subtotal}`,
       discountAmount: "$00.00",
       taxesAmount: "$00.00",
-      totalAmount: "$00.00",
-      paymentAmount: "$00.00",
-      changeAmount: "$00.00",
-      cashAmount: "$00.00",
-      website: "WWW.FIXOEM.COM",
-      products: [
-        { sku: "123456", descripcion: "Pantalla iPhone 11", cantidad: 2, precioUnitario: 500, precioTotal: 2 * 500 },
-        { sku: "789012", descripcion: "Batería Samsung S21", cantidad: 1, precioUnitario: 300, precioTotal: 1 * 300 },
-        { sku: "345678", descripcion: "Cargador USB-C 20W", cantidad: 3, precioUnitario: 200, precioTotal: 3 * 200 }
-      ]
+      totalAmount: `${data.total}`,
+      paymentAmount: `${yourPayment}`,
+      changeAmount: `${yourChange}`,
+      cashAmount: `${data.total}`,
+      website: "WWW.FIXOEM.COM", //moddify
+      products: cart,
     };
-
+  
+    console.log(ticketData);
     generateTicket(ticketData);
-
-  };
-
-  const handleFinishPayment = () => {
-
-    setLoading(true);
-    // Guardar data en bd
-
-    // Despues de enviar data a bd imprimir ticket
-    printSale();
-    // Aquí puedes agregar la lógica para finalizar el pago, como enviar los datos a una API.
     reset();
-
-    setTimeout(() => {
-      setLoading(false); // Finaliza la carga
-    }, 3000);
   };
 
-  const [loading, setLoading] = useState(false);
 
   if (loading) {
     return <LoadingSecondary />;
   }
 
-  function reset() {
-    setIsPaying(false);
-  }
+
 
   return (
     <Container fluid style={{ height: '100%', padding: '0' }}>
@@ -382,19 +536,28 @@ const PointOfSale = () => {
               {
                 !isPaying ? 
                 (
-                  <Button variant="secondary" className='secondary' onClick={handleShowModal}>
-                    Otro Producto
-                  </Button>
+                  <>
+
+                    <Button variant="secondary" className='secondary' onClick={handleShowModal}>
+                      Otro Producto
+                    </Button>
+                    <Button variant="secondary" className='secondary' onClick={() => { navigate('/panel') }}>
+                      Cancelar
+                    </Button>
+                  </>
                 ) : 
                 (
-                  <Button variant="secondary" onClick={addPaymentMethod}>
-                    Agregar Método de Pago
-                  </Button>
+                  <>
+                    <Button variant="secondary" onClick={addPaymentMethod}>
+                      Agregar Método de Pago
+                    </Button>
+                    <Button variant="secondary" className='secondary' onClick={() => { handlePayment() }}>
+                      Volver
+                    </Button>
+                  </>
                 )
               }
-              <Button variant="secondary" className='secondary' onClick={() => { navigate('/panel') }}>
-                Cancelar
-              </Button>
+              
             </>
           }
         />
@@ -463,12 +626,12 @@ const PointOfSale = () => {
             <div style={{ height: '70%', display: 'flex', width: '100%', flexFlow: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
                 <span>Pago</span>
-                <span>$00.00</span>
+                <span>${yourPayment.toFixed(2)}</span>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
                 <span>Cambío: </span>
-                <span>$00.00</span>
+                <span>${ yourChange.toFixed(2) }</span>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0', margin: 'auto 0 0 0' }}>

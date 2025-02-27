@@ -1,4 +1,3 @@
-import React from 'react';
 import { Nav, Offcanvas } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import logo from '/reverse.png'
@@ -51,13 +50,13 @@ const Sidebar = ({ show, handleClose }: SidebarProps) => {
           </Nav.Link>
           <Nav.Link
             as={Link}
-            to="/punto-venta"
+            to="/puntos-venta"
             onClick={handleClose}
             className={`d-flex justify-content-between align-items-center ${
-              location.pathname === '/punto-venta' ? 'active' : ''
+              location.pathname === '/puntos-venta' ? 'active' : ''
             }`}
           >
-            <span>Punto Venta</span>
+            <span>Puntos de Venta</span>
             <FaCashRegister className="ms-2" size={25} /> {/* Ícono a la derecha */}
           </Nav.Link>
           <Nav.Link

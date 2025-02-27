@@ -213,7 +213,7 @@ const CashOut = () => {
     )
 
     // Función para manejar cambios en los inputs
-  const handleInputChange = (e, field) => {
+  const handleInputChange = (e: any, field: any) => {
     const value = e.target.value;
     setCashoutData((prevState) => {
       const updatedByUser = {

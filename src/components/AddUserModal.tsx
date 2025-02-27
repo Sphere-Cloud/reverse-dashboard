@@ -1,32 +1,81 @@
-import { useState } from 'react';
-import { Modal, Button, Form } from "react-bootstrap";
+import React, { useState } from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
 
-const AddUserModal = ({ show, handleClose, handleSave }) => {
-  const [newUser, setNewUser] = useState({
+// Definimos las props del componente
+interface AddUserModalProps {
+  show: boolean;
+  handleClose: () => void;
+  handleSave: (user: User) => Promise<void>;
+  roles: Role[];
+}
+
+
+interface Role {
+  id: number; // SERIAL PRIMARY KEY
+  title: string; // VARCHAR(255) NOT NULL
+  created_at: Date; // TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  updated_at: Date; // TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+}
+
+// Definimos la estructura del usuario
+interface User {
+  name: string;
+  lastname: string;
+  email: string;
+  password: string;
+  role_id: number;
+  is_active: boolean;
+  company_id: number
+}
+
+const AddUserModal: React.FC<AddUserModalProps> = ({ show, handleClose, handleSave, roles }) => {
+  // Estado para manejar los datos del nuevo usuario
+  const [newUser, setNewUser] = useState<User>({
     name: '',
     lastname: '',
     email: '',
     password: '',
-    role_id: '',
+    role_id: 1,
+    is_active: true,
+    company_id: 1 //harcoded
   });
 
-  const handleChange = (e) => {
+  // Manejador de cambios en los inputs
+  const handleChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
-    setNewUser({ ...newUser, [name]: value });
+    console.log(name, value);
+    setNewUser({
+      ...newUser,
+      [name]: name == "role_id" ? (value ? parseInt(value, 10) : null) : value,
+    });
   };
 
+  // Manejador de envío del formulario
   const handleSubmit = () => {
     handleSave(newUser);
-    handleClose();
+    handleClose(); // Cerrar el modal después de guardar
+    reset();
+  };
+
+  const reset = () => {
+    setNewUser({
+      name: '',
+      lastname: '',
+      email: '',
+      password: '',
+      role_id: 1,
+      is_active: true,
+      company_id: 1});
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={() => { reset(); handleClose();}}>
       <Modal.Header closeButton>
         <Modal.Title>Agregar Nuevo Usuario</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
+          {/* Campo para el nombre */}
           <Form.Group className="mb-3">
             <Form.Label>Nombre</Form.Label>
             <Form.Control
@@ -37,6 +86,8 @@ const AddUserModal = ({ show, handleClose, handleSave }) => {
               placeholder="Ingrese el nombre"
             />
           </Form.Group>
+
+          {/* Campo para el apellido */}
           <Form.Group className="mb-3">
             <Form.Label>Apellido</Form.Label>
             <Form.Control
@@ -47,6 +98,8 @@ const AddUserModal = ({ show, handleClose, handleSave }) => {
               placeholder="Ingrese el apellido"
             />
           </Form.Group>
+
+          {/* Campo para el email */}
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -57,6 +110,8 @@ const AddUserModal = ({ show, handleClose, handleSave }) => {
               placeholder="Ingrese el email"
             />
           </Form.Group>
+
+          {/* Campo para la contraseña */}
           <Form.Group className="mb-3">
             <Form.Label>Contraseña</Form.Label>
             <Form.Control
@@ -67,6 +122,8 @@ const AddUserModal = ({ show, handleClose, handleSave }) => {
               placeholder="Ingrese la contraseña"
             />
           </Form.Group>
+
+          {/* Campo para el rol */}
           <Form.Group className="mb-3">
             <Form.Label>Rol</Form.Label>
             <Form.Control
@@ -75,18 +132,23 @@ const AddUserModal = ({ show, handleClose, handleSave }) => {
               value={newUser.role_id}
               onChange={handleChange}
             >
-              <option value="">Seleccione un rol</option>
-              <option value="1">Administrador</option>
-              <option value="2">Usuario</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.title}
+                </option>
+              ))}
               {/* Agrega más opciones según los roles disponibles en tu base de datos */}
             </Form.Control>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        {/* Botón para cerrar el modal */}
+        <Button variant="secondary" onClick={() => { reset(); handleClose();}}>
           Cerrar
         </Button>
+
+        {/* Botón para guardar el nuevo usuario */}
         <Button variant="primary" onClick={handleSubmit}>
           Guardar
         </Button>

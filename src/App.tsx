@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { Button, Container, Navbar } from 'react-bootstrap';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
 import Dashboard from './pages/Dashboard';
 import Sales from './pages/Sales';
 import Inventory from './pages/Inventory';
@@ -8,6 +7,7 @@ import Settings from './pages/Settings';
 import Users from './pages/Users';
 import Login from './pages/Login';
 import PointOfSale from './pages/PointOfSale';
+import PointOfSales from './pages/PointOfSales';
 import SaleDetail from './pages/SaleDetail';
 import CashOut from './pages/CashOut';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,7 +21,8 @@ const App = () => {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
 
-          <Route path="/punto-venta" element={<PointOfSale />} />
+          <Route path="/puntos-venta" element={<PointOfSales />} />
+          <Route path="/punto-venta/:id" element={<PointOfSale />} />
           
 
           <Route path="/panel" element={<Dashboard />} />

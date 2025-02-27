@@ -44,6 +44,7 @@ const Login = () => {
         localStorage.setItem("user_lastname", JSON.stringify(response.data.usuario.lastname));
         localStorage.setItem("user_id", JSON.stringify(response.data.usuario.id));
         localStorage.setItem("user_role_id", JSON.stringify(response.data.usuario.role_id));
+        localStorage.setItem("user_company_id", JSON.stringify(response.data.usuario.company_id));
 
 
         navigate("/panel");

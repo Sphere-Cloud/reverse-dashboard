@@ -2,339 +2,63 @@ import UniversalTable from '../components/UniversalTable';
 import { Container, Row, Button } from 'react-bootstrap';
 import CustomNavbar from '../components/CustomNavbar';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+interface Sale {
+  id: number; // SERIAL PRIMARY KEY
+  company_id: number; // INTEGER REFERENCES companies(id) ON DELETE CASCADE
+  shift_id: number | null; // INTEGER REFERENCES shifts(id) ON DELETE SET NULL
+  payment_method: string | null; // VARCHAR(50)
+  subtotal: number; // FLOAT
+  total: number; // FLOAT
+  comment: string | null; // TEXT
+  created_at: Date; // TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  updated_at: Date; // TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  is_active: boolean; // BOOLEAN DEFAULT TRUE
+}
+
 
 const Sales = () => {
 
   const navigate = useNavigate();
     
-    const salesData = [
-        {
-          folio: 1,
-          createdAt: '2023-10-01',
-          importeTotal: 100.0,
-          vendedor: 'Josafat',
-          metodoPago: 'Debito',
-          sucursal: 'MEXICO',
-        },
-        {
-          folio: 2,
-          createdAt: '2023-10-02',
-          importeTotal: 150.0,
-          vendedor: 'Ana',
-          metodoPago: 'Efectivo',
-          sucursal: 'GUADALAJARA',
-        },
-        {
-          folio: 3,
-          createdAt: '2023-10-03',
-          importeTotal: 200.0,
-          vendedor: 'Carlos',
-          metodoPago: 'Crédito',
-          sucursal: 'MONTERREY',
-        },
-        {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-          {
-            folio: 1,
-            createdAt: '2023-10-01',
-            importeTotal: 100.0,
-            vendedor: 'Josafat',
-            metodoPago: 'Debito',
-            sucursal: 'MEXICO',
-          },
-          {
-            folio: 2,
-            createdAt: '2023-10-02',
-            importeTotal: 150.0,
-            vendedor: 'Ana',
-            metodoPago: 'Efectivo',
-            sucursal: 'GUADALAJARA',
-          },
-          {
-            folio: 3,
-            createdAt: '2023-10-03',
-            importeTotal: 200.0,
-            vendedor: 'Carlos',
-            metodoPago: 'Crédito',
-            sucursal: 'MONTERREY',
-          },
-      ];
-  
-      const salesColumns = [
-        { key: 'folio', header: 'Folio' },
-        { key: 'createdAt', header: 'Fecha' },
-        { key: 'sucursal', header: 'Sucursal' },
-        {
-          key: 'importeTotal',
-          header: 'Total',
-          render: (data) => `$${data.importeTotal.toFixed(2)}`,
-        },
-        { key: 'vendedor', header: 'Vendedor' },
-        { key: 'metodoPago', header: 'Método de Pago' }
-      ];
+    const [sales, setSales] = useState<Sale[]>([]);
 
+    useEffect(() => {
+      
+      const fetchSales = async() => {
+        try {
+          const response = await axios.get("http://78.13.0.202:8080/sales");
+          setSales(response.data);
+          console.log("Se obtuvo las ventas correctamente: ", response.data);
+        } catch (error) {
+          console.error("Hubo un error al obtener las ventas: ", error)
+        }
+      }
+
+      fetchSales();
+
+    }, [])
+  
+    const salesColumns = [
+      { key: 'id', header: 'Folio' },
+      { key: 'created_at', header: 'Fecha' },
+      //{ key: 'sucursal', header: 'Sucursal' },
+      {
+        key: 'total',
+        header: 'Total',
+        render: (data: Sale) => `$${data.total.toFixed(2)}`,
+      },
+      {
+        key: 'subtotal',
+        header: 'Subtotal',
+        render: (data: Sale) => `$${data.total.toFixed(2)}`,
+      },
+      //{ key: 'vendedor', header: 'Vendedor' },
+      { key: 'paymentMethod', header: 'Método de Pago' },
+      { key: 'updated_at', header: 'Actualizado' }
+    ];
     
   
     return (
@@ -351,7 +75,7 @@ const Sales = () => {
           />
         </Row>
         <Row style={{ height: '90%' }} >
-          <UniversalTable columns={salesColumns} data={salesData} />
+          <UniversalTable columns={salesColumns} data={sales} />
         </Row>
       </Container>
     );
