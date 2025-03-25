@@ -51,7 +51,7 @@ const Login = () => {
       } else {
         setError(response.data.mensaje || "Error al iniciar sesión");
       }
-    } catch (err) {
+    } catch (error) {
       setError("Credenciales incorrectas o error del servidor.");
     }
 
@@ -129,6 +129,7 @@ const Login = () => {
         </div>
       </Col>
     </Container>
+    
   );
 };
 
