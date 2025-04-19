@@ -1,16 +1,73 @@
-import '../styles/cardPos.css'
+import '../styles/cardPos.css';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { SlOptionsVertical } from 'react-icons/sl';
 import StartupCashbox from './StartupCashbox';
+import CloseupCashbox from './CloseupCashbox';
+import EllipsisMenu from './EllipsisMenu';
+import WithdrawCash from './WithdrawCash';
+import DepositCash from './DepositCash';
+import { useState } from 'react';
 
 interface CardPOSProps {
   POSName: string;
   POSId: number;
+  POSStatusIsOpen: boolean;
+  POSUserResponsable: string;
 }
 
-const CardPOS = ({ POSName, POSId }: CardPOSProps) => {
+const CardPOS = ({
+  POSName,
+  POSId,
+  POSStatusIsOpen,
+  POSUserResponsable,
+}: CardPOSProps) => {
   const navigate = useNavigate();
+
+  const [showCashboxConfig, setShowCashboxConfig] = useState(false);
+  const [showCashboxClose, setShowCashboxClose] = useState(false);
+  const [showWithdrawCash, setShowWithdrawCash] = useState(false);
+  const [showDepositCash, setShowDepositCash] = useState(false);
+
+  const handleOpenPOS = () => {
+    navigate(`/punto-venta/${POSId}`);
+    return;
+  };
+
+  const handleClosePos = () => {
+    handleOpenCashboxClose();
+  };
+
+  const handleOpenConfigCashbox = () => {
+    setShowCashboxConfig(true);
+  };
+
+  const handleCloseConfigCashbox = () => {
+    setShowCashboxConfig(false);
+  };
+
+  const handleOpenCashboxClose = () => {
+    setShowCashboxClose(true);
+  };
+
+  const handleCloseCashboxClose = () => {
+    setShowCashboxClose(false);
+  };
+
+  const handleOpenWithdrawCash = () => {
+    setShowWithdrawCash(true);
+  };
+
+  const handleCloseWithdrawCash = () => {
+    setShowWithdrawCash(false);
+  };
+
+  const handleOpenDepositCash = () => {
+    setShowDepositCash(true);
+  };
+
+  const handleCloseDepositCash = () => {
+    setShowDepositCash(false);
+  };
 
   return (
     <div
@@ -25,7 +82,13 @@ const CardPOS = ({ POSName, POSId }: CardPOSProps) => {
         border: '1px solid #ddd',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
+        }}
+      >
         <div
           style={{
             display: 'flex',
@@ -38,34 +101,101 @@ const CardPOS = ({ POSName, POSId }: CardPOSProps) => {
             <strong
               style={{ fontSize: '9px', background: 'rgb(242, 92, 5, 50%)' }}
             >
-              {' '}
-              ABIERTO{' '}
+              {POSStatusIsOpen ? 'ABIERTO' : 'CERRADO'}
             </strong>
           </div>
         </div>
-        <div className='hover-gray' style={{ borderRadius: '50%' ,display: 'flex', alignItems: 'center', width: '30px', height: '30px', justifyContent: 'center' }}>
-          <SlOptionsVertical />
+        <div
+          className="hover-gray"
+          style={{
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            width: '30px',
+            height: '30px',
+            justifyContent: 'center',
+          }}
+        >
+          <EllipsisMenu
+            items={[
+              { id: 1, name: 'Retiro', action: handleOpenWithdrawCash },
+              { id: 2, name: 'Deposito', action: handleOpenDepositCash },
+              { id: 3, name: 'Ventas', action: () => { navigate("/ventas") } },
+              { id: 4, name: 'Configuración', action: () => {} },
+            ]}
+          />
         </div>
       </div>
 
-      <span> Usuario </span>
+      <span> {POSUserResponsable} </span>
 
-      <Button
-        onClick={() => navigate(`/punto-venta/${POSId}`)}
-        variant="primary"
-        style={{ width: '100%' }}
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '10px',
+        }}
       >
-        ABRIR POS
-      </Button>
+        {!POSStatusIsOpen ? (
+          <Button
+            onClick={handleOpenConfigCashbox}
+            variant="primary"
+            style={{ width: '100%' }}
+          >
+            ABRIR CAJA
+          </Button>
+        ) : (
+          <Button
+            onClick={handleOpenPOS}
+            variant="primary"
+            style={{ width: '100%' }}
+          >
+            CONTINUAR
+          </Button>
+        )}
+        {POSStatusIsOpen && (
+          <Button
+            onClick={handleClosePos}
+            variant="outline-secondary"
+            style={{ width: '100%' }}
+          >
+            CERRAR CAJA
+          </Button>
+        )}
+      </div>
 
       <StartupCashbox
-            show={true}
-            title="Apertura de Caja"
-            user="Juan Pérez"
-            cashboxName="Caja Principal"
-            onClose={() => {}}
-            onSubmit={() => {}}
-        />
+        show={showCashboxConfig}
+        title="Apertura de Caja"
+        user={POSUserResponsable}
+        cashboxName={POSName}
+        cashboxId={POSId}
+        onClose={handleCloseConfigCashbox}
+      />
+
+      <CloseupCashbox
+        show={showCashboxClose}
+        title="Cierre de Caja"
+        user={POSUserResponsable}
+        cashboxName={POSName}
+        cashboxId={POSId}
+        onClose={handleCloseCashboxClose}
+      />
+
+      <WithdrawCash
+        show={showWithdrawCash}
+        userId={parseInt(POSUserResponsable)}
+        cashboxId={POSId}
+        onClose={handleCloseWithdrawCash}
+      />
+
+      <DepositCash
+        show={showDepositCash}
+        userId={parseInt(POSUserResponsable)}
+        cashboxId={POSId}
+        onClose={handleCloseDepositCash}
+      />
     </div>
   );
 };

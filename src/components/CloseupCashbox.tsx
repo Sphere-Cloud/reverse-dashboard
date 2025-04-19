@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from './Modal';
 import { Button, Form, InputGroup, Alert } from 'react-bootstrap';
 
-interface StartupCashboxProps {
+
+interface CloseupCashboxProps {
     show: boolean;
     title: string;
     user: string;
@@ -11,16 +12,9 @@ interface StartupCashboxProps {
     onClose: () => void;
 }
 
-const StartupCashbox = ({ 
-    show, 
-    title, 
-    user, 
-    cashboxName, 
-    cashboxId,
-    onClose
-}: StartupCashboxProps) => {
-
-    const [initialAmount, setInitialAmount] = useState<string>('');
+const CloseupCashbox = ( {show, title, user, cashboxName, cashboxId, onClose} : CloseupCashboxProps ) => {
+    
+    const [finalAmount, setFinalAmount] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,7 +22,7 @@ const StartupCashbox = ({
         const value = e.target.value;
         // Validar formato numérico con máximo 2 decimales
         if (/^\d*\.?\d{0,2}$/.test(value) || value === '') {
-            setInitialAmount(value);
+            setFinalAmount(value);
             setError('');
         }
     };
@@ -36,39 +30,38 @@ const StartupCashbox = ({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!initialAmount || isNaN(Number(initialAmount))) {
+        if (!finalAmount || isNaN(Number(finalAmount))) {
             setError('Por favor ingrese un monto válido');
             return;
         }
 
-        if (Number(initialAmount) <= 0) {
+        if (Number(finalAmount) <= 0) {
             setError('El monto debe ser mayor a cero');
             return;
         }
 
         setIsSubmitting(true);
         try {
-            await onSubmit(Number(initialAmount));
+            await onSubmit(Number(finalAmount));
             onClose();
         } catch (err) {
-            setError('Error al guardar el monto inicial');
+            setError('Error al guardar el monto final');
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const onSubmit = async (amount: number) => {
-        // Lógica para guardar el monto inicial en la caja
-        // await api.post('/cashbox/startup', { amount });
+        // Lógica para guardar el monto final
     };
 
     useEffect(() => {
         if (!show) {
-            setInitialAmount('');
+            setFinalAmount('');
             setError('');
         }
     }, [show]);
-
+    
     return (
         <Modal
             show={show}
@@ -99,7 +92,7 @@ const StartupCashbox = ({
                                 fontWeight: 500, 
                                 marginBottom: 8 
                             }}>
-                                Saldo inicial *
+                                Saldo en caja*
                             </Form.Label>
                             
                             <InputGroup>
@@ -109,7 +102,7 @@ const StartupCashbox = ({
                                     step="0.01"
                                     min="0"
                                     placeholder="Ej. 1000.00"
-                                    value={initialAmount}
+                                    value={finalAmount}
                                     onChange={handleInputChange}
                                     isInvalid={!!error}
                                     disabled={isSubmitting}
@@ -146,6 +139,6 @@ const StartupCashbox = ({
             handlers={{ onClose }}
         />
     );
-}
+};
 
-export default StartupCashbox;
+export default CloseupCashbox;

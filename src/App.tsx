@@ -16,14 +16,16 @@ import './App.css';
 const App = () => {
   return (
     <Router>
-      <Container fluid style={{ height: '100%', display: 'flex', alignItems: 'center'  }}>
+      <Container
+        fluid
+        style={{ height: '100%', display: 'flex', alignItems: 'center', padding: '0' }}
+      >
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
 
           <Route path="/puntos-venta" element={<PointOfSales />} />
           <Route path="/punto-venta/:id" element={<PointOfSale />} />
-          
 
           <Route path="/panel" element={<Dashboard />} />
           <Route path="/corte-caja" element={<CashOut />} />

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import { Button, Form, Alert, InputGroup } from 'react-bootstrap';
+import Modal from './Modal';
 
 interface CartItem {
   product: Product;
@@ -44,7 +45,14 @@ interface AddProductModalProps {
   addProductToCart: (cartItem: CartItem) => void;
 }
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ show, handleClose, addProductToCart }) => {
+const AddProductModal: React.FC<AddProductModalProps> = ({
+  show,
+  handleClose,
+  addProductToCart,
+}) => {
+  const [error, setError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Estado para manejar los datos del producto
   const [product, setProduct] = useState<Product>({
     id: 0,
@@ -62,11 +70,21 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ show, handleClose, ad
   // Estado para manejar la cantidad del producto
   const [quantity, setQuantity] = useState<number>(1);
 
+  useEffect(() => {
+    clean();
+  }, [show]);
+
   // Manejador de cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'quantity') {
+
+    if (/^\d*\.?\d{0,2}$/.test(value) && name === 'quantity') {
       setQuantity(Number(value));
+    } else if (/^\d*\.?\d{0,2}$/.test(value) && name === 'price_sale') {
+      setProduct({
+        ...product,
+        ['price_sale']: Number(value),
+      });
     } else {
       setProduct({
         ...product,
@@ -76,9 +94,35 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ show, handleClose, ad
   };
 
   // Manejador de envío del formulario
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setIsSubmitting(true);
+    try {
+      if (product.price_sale == 0) {
+        setError('El precio de venta no puede ser cero.');
+        return;
+      }
+
+      if (quantity <= 0) {
+        setError('La cantidad debe ser mayor a cero.');
+        return;
+      }
+
+      if (!product.description) {
+        setError('La descripción es obligatoria.');
+        return;
+      }
+      await onSubmit();
+      handleClose();
+    } catch (err) {
+      setError(`Error al guardar el monto inicial: ${err}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onSubmit = async () => {
     // Crear un inventario ficticio para el producto personalizado
     const customInventory: Inventory = {
       id: 0, // ID ficticio
@@ -101,68 +145,152 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ show, handleClose, ad
       quantity: quantity,
     };
 
+    console.log(cartItem);
+
     // Agregar el producto al carrito
     addProductToCart(cartItem);
+    clean(); // Limpiar los campos después de enviar
     handleClose(); // Cerrar el modal después de enviar
   };
 
+  const clean = () => {
+    setProduct({
+      id: 0,
+      company_id: null,
+      category_id: null,
+      description: '',
+      unit_measurement: '',
+      created_at: new Date(),
+      updated_at: new Date(),
+      barcode: '',
+      is_active: true,
+      price_sale: 0,
+    });
+    setQuantity(1);
+    setError('');
+  };
+
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Agregar Producto Personalizado</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          {/* Campo para la descripción del producto */}
-          <Form.Group controlId="formProductDescription">
-            <Form.Label>Descripción del Producto</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Ingrese la descripción del producto"
-              name="description"
-              value={product.description}
-              onChange={handleInputChange}
-              required
-            />
-          </Form.Group>
+    <Modal
+      show={show}
+      title={'Agregar Producto Personalizado'}
+      content={
+        <div style={{ padding: '0 15px' }}>
+          <Form onSubmit={handleSubmit}>
+            {error && (
+              <Alert variant="danger" className="mt-2" style={{ fontSize: 14 }}>
+                {error}
+              </Alert>
+            )}
+            {/* Campo para la descripción del producto */}
+            <Form.Group
+              controlId="formProductDescription"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                margin: '10px',
+              }}
+            >
+              <Form.Label style={{ fontWeight: 500, textAlign: 'start' }}>
+                Descripción del Producto
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingrese la descripción del producto"
+                name="description"
+                value={product.description}
+                onChange={handleInputChange}
+                required
+                disabled={isSubmitting}
+                isInvalid={!!error}
+              />
+            </Form.Group>
 
-          {/* Campo para el precio del producto */}
-          <Form.Group controlId="formProductPrice">
-            <Form.Label>Precio</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Ingrese el precio del producto"
-              name="price_sale"
-              value={product.price_sale}
-              onChange={handleInputChange}
-              required
-            />
-          </Form.Group>
+            {/* Campo para el precio del producto */}
+            <Form.Group
+              controlId="formProductPrice"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '20px',
+                margin: '10px',
+              }}
+            >
+              <Form.Label
+                style={{ fontWeight: 500, width: '50%', textAlign: 'start' }}
+              >
+                Precio
+              </Form.Label>
+              <InputGroup style={{ width: '50%' }}>
+                <InputGroup.Text>$</InputGroup.Text>
+                <Form.Control
+                  type="number"
+                  placeholder="Ingrese el precio del producto"
+                  name="price_sale"
+                  value={product.price_sale}
+                  onChange={handleInputChange}
+                  min="0"
+                  required
+                  disabled={isSubmitting}
+                  isInvalid={!!error}
+                />
+                <InputGroup.Text>MXN</InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
 
-          {/* Campo para la cantidad del producto */}
-          <Form.Group controlId="formProductQuantity">
-            <Form.Label>Cantidad</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Ingrese la cantidad"
-              name="quantity"
-              value={quantity}
-              onChange={handleInputChange}
-              min="1"
-              required
-            />
-          </Form.Group>
-
-          {/* Botón para enviar el formulario */}
+            {/* Campo para la cantidad del producto */}
+            <Form.Group
+              controlId="formProductQuantity"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '20px',
+                margin: '10px',
+              }}
+            >
+              <Form.Label
+                style={{ fontWeight: 500, width: '50%', textAlign: 'start' }}
+              >
+                Cantidad
+              </Form.Label>
+              <InputGroup style={{ width: '50%' }}>
+                <Form.Control
+                  type="number"
+                  placeholder="Ej. 1000.00"
+                  name="quantity"
+                  value={quantity}
+                  onChange={handleInputChange}
+                  min="0"
+                  required
+                  disabled={isSubmitting}
+                  isInvalid={!!error}
+                />
+                <InputGroup.Text>PZA</InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
+          </Form>
+        </div>
+      }
+      buttonGroup={
+        <div style={{ display: 'flex', gap: 10 }}>
           <Button
-            type="submit"
-            style={{ width: '100%', margin: '10px 0 0 0', background: '#F25C05', borderColor: '#F25C05' }}
+            variant="outline-secondary"
+            onClick={handleClose}
+            disabled={isSubmitting}
           >
-            AGREGAR
+            Cancelar
           </Button>
-        </Form>
-      </Modal.Body>
-    </Modal>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Guardando...' : 'Confirmar'}
+          </Button>
+        </div>
+      }
+      handlers={{ onClose: handleClose }}
+    />
   );
 };
 

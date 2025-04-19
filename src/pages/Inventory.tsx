@@ -87,7 +87,7 @@ export default function Inventory(){
       ];
 
     return(
-      <Container fluid style={{ height: '100%', padding: '0' }}>
+      <Container fluid style={{ height: '100%' }}>
         <Row style={{ height: '10%' }} >
           <CustomNavbar actions={<></>} />
         </Row>

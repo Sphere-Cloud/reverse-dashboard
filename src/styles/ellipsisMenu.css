@@ -1,0 +1,11 @@
+.option {
+  padding: 10px 20px;
+  background: white;
+  width: 100%;
+  text-align: start;
+}
+
+.option:hover {
+  background: #f0f0f0;
+  color: black;
+}
