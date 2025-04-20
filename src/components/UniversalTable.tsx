@@ -17,7 +17,7 @@ interface UniversalTableProps {
   itemsPerPage?: number; // Número de elementos por página
 }
 
-const UniversalTable = ({ columns, data, itemsPerPage = 15 }: UniversalTableProps) => {
+const UniversalTable = ({ columns, data, itemsPerPage = 17 }: UniversalTableProps) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
 

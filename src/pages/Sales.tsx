@@ -18,67 +18,72 @@ interface Sale {
   is_active: boolean; // BOOLEAN DEFAULT TRUE
 }
 
-
 const Sales = () => {
-
   const navigate = useNavigate();
-    
-    const [sales, setSales] = useState<Sale[]>([]);
 
-    useEffect(() => {
-      
-      const fetchSales = async() => {
-        try {
-          const response = await axios.get("http://78.13.0.202:8080/sales");
-          setSales(response.data);
-          console.log("Se obtuvo las ventas correctamente: ", response.data);
-        } catch (error) {
-          console.error("Hubo un error al obtener las ventas: ", error)
-        }
+  const [sales, setSales] = useState<Sale[]>([]);
+
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        const response = await axios.get('http://78.13.0.202:8080/sales');
+        setSales(response.data);
+        console.log('Se obtuvo las ventas correctamente: ', response.data);
+      } catch (error) {
+        console.error('Hubo un error al obtener las ventas: ', error);
       }
+    };
 
-      fetchSales();
+    fetchSales();
+  }, []);
 
-    }, [])
-  
-    const salesColumns = [
-      { key: 'id', header: 'Folio' },
-      { key: 'created_at', header: 'Fecha' },
-      //{ key: 'sucursal', header: 'Sucursal' },
-      {
-        key: 'total',
-        header: 'Total',
-        render: (data: Sale) => `$${data.total.toFixed(2)}`,
-      },
-      {
-        key: 'subtotal',
-        header: 'Subtotal',
-        render: (data: Sale) => `$${data.total.toFixed(2)}`,
-      },
-      //{ key: 'vendedor', header: 'Vendedor' },
-      { key: 'paymentMethod', header: 'Método de Pago' },
-      { key: 'updated_at', header: 'Actualizado' }
-    ];
-    
-  
-    return (
-      <Container fluid style={{ height: '100%' }}>
-        <Row style={{ height: '10%' }} >
-          <CustomNavbar
-            actions={
-              <> 
-                <Button variant="secondary" className='secondary' onClick={ () => navigate('/punto-venta')}>
-                  Nuevo
-                </Button>
-              </>
-            }
-          />
-        </Row>
-        <Row style={{ height: '90%' }} >
-          <UniversalTable columns={salesColumns} data={sales} />
-        </Row>
-      </Container>
-    );
-  };
-  
-  export default Sales;
+  const salesColumns = [
+    { key: 'id', header: 'Folio' },
+    { key: 'created_at', header: 'Fecha' },
+    //{ key: 'sucursal', header: 'Sucursal' },
+    {
+      key: 'total',
+      header: 'Total',
+      render: (data: Sale) => `$${data.total.toFixed(2)}`,
+    },
+    {
+      key: 'subtotal',
+      header: 'Subtotal',
+      render: (data: Sale) => `$${data.total.toFixed(2)}`,
+    },
+    //{ key: 'vendedor', header: 'Vendedor' },
+    { key: 'paymentMethod', header: 'Método de Pago' },
+    { key: 'updated_at', header: 'Actualizado' },
+  ];
+
+  return (
+    <Container fluid style={{ height: '100%' }}>
+      <Row style={{ height: '10%' }}>
+        <CustomNavbar
+          actions={
+            <>
+              <Button
+                variant="secondary"
+                className="secondary"
+                onClick={() => navigate('/puntos-venta')}
+              >
+                Nuevo
+              </Button>
+            </>
+          }
+        />
+      </Row>
+      <Row
+        style={{
+          height: 'calc(90% - 30px)',
+          marginBlock: '10px',
+          marginTop: '30px',
+        }}
+      >
+        <UniversalTable columns={salesColumns} data={sales} />
+      </Row>
+    </Container>
+  );
+};
+
+export default Sales;

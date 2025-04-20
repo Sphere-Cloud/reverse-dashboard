@@ -1,16 +1,15 @@
 .table-component {
-  height: 90%;
-  width: 85% !important;
+  height: 100%;
+  width: 95% !important;
   margin: auto;
 }
 
 .universal-table {
+  overflow-x: auto;
+  display: block;
+  height: 90%;
   width: 100%;
-  border-collapse: collapse;
-  flex-grow: 1; /* La tabla ocupa el espacio restante */
-  overflow-y: auto; /* Agrega scroll si la tabla es muy larga */
 }
-
 
 .universal-table th,
 .universal-table td {
@@ -25,11 +24,17 @@
   color: #333 !important;
 }
 
-.universal-table thead{
+
+.universal-table th,
+.universal-table td {
+  border: 2px solid #ddd;
+}
+
+.universal-table thead {
   height: 70px;
 }
 
-.universal-table tbody{
+.universal-table tbody {
   height: fit-content;
 }
 
@@ -43,27 +48,22 @@
   cursor: pointer;
 }
 
-
-
-
-
 /* Estilos para la paginación */
 .pagination {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .pagination li {
-  margin: 0 5px;
+  margin: 0 0px;
 }
 
 .pagination li a {
   padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
   cursor: pointer;
   color: #007bff;
   text-decoration: none;
@@ -81,11 +81,11 @@
   cursor: not-allowed;
 }
 
-.pagination li a{
-  color: #F25C05;
+.pagination li a {
+  color: #f25c05;
 }
 
-.pagination li.active a{
-  background: #F25C05;
-  border-color: #F25C05;
+.pagination li.active a {
+  background: #f25c05;
+  border-color: #f25c05;
 }
