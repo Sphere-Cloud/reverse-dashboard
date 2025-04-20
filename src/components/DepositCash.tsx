@@ -106,7 +106,12 @@ const DepositCash = ({
           {error && <Alert variant="danger">{error}</Alert>}
           <Form
             onSubmit={handleSubmit}
-            style={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}
+            style={{
+              width: '100%',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px',
+            }}
           >
             <Form.Group style={{ width: '100%' }}>
               <Form.Label
@@ -120,6 +125,7 @@ const DepositCash = ({
                 Importe
               </Form.Label>
               <InputGroup>
+                <InputGroup.Text>$</InputGroup.Text>
                 <Form.Control
                   type="number"
                   name="amount"
@@ -130,7 +136,6 @@ const DepositCash = ({
                   isInvalid={!!error}
                   disabled={isSubmitting}
                 />
-                <InputGroup.Text>MXN</InputGroup.Text>
               </InputGroup>
             </Form.Group>
             <Form.Group style={{ width: '100%' }}>

@@ -23,7 +23,6 @@ const WithdrawCash = ({
   show,
   onClose,
 }: WithdrawCashProps) => {
-
   const [error, setError] = useState<String>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -37,7 +36,7 @@ const WithdrawCash = ({
 
   useEffect(() => {
     clean();
-  }, [show])
+  }, [show]);
 
   const handlePayloadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -100,7 +99,7 @@ const WithdrawCash = ({
     });
     setError('');
     setIsSubmitting(false);
-  }
+  };
 
   return (
     <Modal
@@ -111,7 +110,12 @@ const WithdrawCash = ({
           {error && <Alert variant="danger">{error}</Alert>}
           <Form
             onSubmit={handleSubmit}
-            style={{ width: '100%', display: 'grid', gap: '10px', gridTemplateColumns: '1fr 1fr' }}
+            style={{
+              width: '100%',
+              display: 'grid',
+              gap: '10px',
+              gridTemplateColumns: '1fr 1fr',
+            }}
           >
             <Form.Group style={{ width: '100%' }}>
               <Form.Label
@@ -125,6 +129,7 @@ const WithdrawCash = ({
                 Importe
               </Form.Label>
               <InputGroup>
+                <InputGroup.Text>$</InputGroup.Text>
                 <Form.Control
                   type="number"
                   name="amount"

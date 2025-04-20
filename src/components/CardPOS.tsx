@@ -27,6 +27,11 @@ const CardPOS = ({
   const [showCashboxClose, setShowCashboxClose] = useState(false);
   const [showWithdrawCash, setShowWithdrawCash] = useState(false);
   const [showDepositCash, setShowDepositCash] = useState(false);
+  const [statusPointOfSale, setStatusPointOfSale] = useState(POSStatusIsOpen);
+
+  const handleStatusPointOfSale = () => {
+    setStatusPointOfSale(!statusPointOfSale);
+  } 
 
   const handleOpenPOS = () => {
     navigate(`/punto-venta/${POSId}`);
@@ -101,7 +106,7 @@ const CardPOS = ({
             <strong
               style={{ fontSize: '9px', background: 'rgb(242, 92, 5, 50%)' }}
             >
-              {POSStatusIsOpen ? 'ABIERTO' : 'CERRADO'}
+              {statusPointOfSale ? 'ABIERTO' : 'CERRADO'}
             </strong>
           </div>
         </div>
@@ -137,7 +142,7 @@ const CardPOS = ({
           gap: '10px',
         }}
       >
-        {!POSStatusIsOpen ? (
+        {!statusPointOfSale ? (
           <Button
             onClick={handleOpenConfigCashbox}
             variant="primary"
@@ -154,7 +159,7 @@ const CardPOS = ({
             CONTINUAR
           </Button>
         )}
-        {POSStatusIsOpen && (
+        {statusPointOfSale && (
           <Button
             onClick={handleClosePos}
             variant="outline-secondary"
@@ -172,6 +177,7 @@ const CardPOS = ({
         cashboxName={POSName}
         cashboxId={POSId}
         onClose={handleCloseConfigCashbox}
+        handleChangePOS={handleStatusPointOfSale}
       />
 
       <CloseupCashbox
@@ -181,6 +187,7 @@ const CardPOS = ({
         cashboxName={POSName}
         cashboxId={POSId}
         onClose={handleCloseCashboxClose}
+        handleChangePOS={handleStatusPointOfSale}
       />
 
       <WithdrawCash

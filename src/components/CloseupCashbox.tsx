@@ -10,9 +10,10 @@ interface CloseupCashboxProps {
     cashboxName: string;
     cashboxId: number;
     onClose: () => void;
+    handleChangePOS: () => void;
 }
 
-const CloseupCashbox = ( {show, title, user, cashboxName, cashboxId, onClose} : CloseupCashboxProps ) => {
+const CloseupCashbox = ( {show, title, user, cashboxName, cashboxId, onClose, handleChangePOS} : CloseupCashboxProps ) => {
     
     const [finalAmount, setFinalAmount] = useState<string>('');
     const [error, setError] = useState<string>('');
@@ -45,7 +46,7 @@ const CloseupCashbox = ( {show, title, user, cashboxName, cashboxId, onClose} : 
             await onSubmit(Number(finalAmount));
             onClose();
         } catch (err) {
-            setError('Error al guardar el monto final');
+            setError(`${err}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -53,6 +54,7 @@ const CloseupCashbox = ( {show, title, user, cashboxName, cashboxId, onClose} : 
 
     const onSubmit = async (amount: number) => {
         // Lógica para guardar el monto final
+        handleChangePOS();
     };
 
     useEffect(() => {
@@ -96,7 +98,7 @@ const CloseupCashbox = ( {show, title, user, cashboxName, cashboxId, onClose} : 
                             </Form.Label>
                             
                             <InputGroup>
-                                <InputGroup.Text>MXN</InputGroup.Text>
+                                <InputGroup.Text>$</InputGroup.Text>
                                 <Form.Control
                                     type="number"
                                     step="0.01"
@@ -107,6 +109,7 @@ const CloseupCashbox = ( {show, title, user, cashboxName, cashboxId, onClose} : 
                                     isInvalid={!!error}
                                     disabled={isSubmitting}
                                 />
+                                <InputGroup.Text>MXN</InputGroup.Text>
                             </InputGroup>
 
                             {error && (

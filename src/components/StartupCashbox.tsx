@@ -9,6 +9,7 @@ interface StartupCashboxProps {
     cashboxName: string;
     cashboxId: number;
     onClose: () => void;
+    handleChangePOS: () => void;
 }
 
 const StartupCashbox = ({ 
@@ -17,7 +18,8 @@ const StartupCashbox = ({
     user, 
     cashboxName, 
     cashboxId,
-    onClose
+    onClose,
+    handleChangePOS
 }: StartupCashboxProps) => {
 
     const [initialAmount, setInitialAmount] = useState<string>('');
@@ -50,8 +52,8 @@ const StartupCashbox = ({
         try {
             await onSubmit(Number(initialAmount));
             onClose();
-        } catch (err) {
-            setError('Error al guardar el monto inicial');
+        } catch (error) {
+            setError(`${error}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -60,6 +62,7 @@ const StartupCashbox = ({
     const onSubmit = async (amount: number) => {
         // Lógica para guardar el monto inicial en la caja
         // await api.post('/cashbox/startup', { amount });
+        handleChangePOS();
     };
 
     useEffect(() => {
