@@ -1,9 +1,15 @@
-
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import CustomNavbar from '../components/CustomNavbar';
 import UniversalTable from '../components/UniversalTable';
-import { FaPrint, FaDownload, FaArrowLeft, FaArrowRight, FaReceipt, FaListAlt  } from 'react-icons/fa';
+import {
+  FaPrint,
+  FaDownload,
+  FaArrowLeft,
+  FaArrowRight,
+  FaReceipt,
+  FaListAlt,
+} from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import logo from '/reverse.png';
 import '../styles/sale-detail.css';
@@ -40,7 +46,7 @@ interface Product {
   category_id: number | null;
   description: string;
   unit_measurement?: string;
-  picture?: Uint8Array; 
+  picture?: Uint8Array;
   created_at: Date;
   updated_at: Date;
   barcode?: string;
@@ -77,60 +83,66 @@ const SaleDetail = () => {
     id: 0,
     company_id: 0,
     shift_id: 0,
-    payment_method: "",
+    payment_method: '',
     subtotal: 0,
     total: 0,
-    comment: "",
+    comment: '',
     created_at: new Date(),
     updated_at: new Date(),
     is_active: true,
   });
 
-  const [saleProducts, setSaleProducts] = useState<SaleHasProduct[]>([])
+  const [saleProducts, setSaleProducts] = useState<SaleHasProduct[]>([]);
   const [saleCart, setSaleCart] = useState<ItemCart[]>([]);
 
   useEffect(() => {
-      
-    const fetchSales = async() => {
+    const fetchSales = async () => {
       try {
         const response = await axios.get(`http://78.13.0.202:8080/sales/${id}`);
         setSale(response.data);
-        console.log("Se obtuvo las venta correctamente: ", response.data);
+        console.log('Se obtuvo las venta correctamente: ', response.data);
       } catch (error) {
-        console.error("Hubo un error al obtener las ventas: ", error)
+        console.error('Hubo un error al obtener las ventas: ', error);
       }
-    }
+    };
 
-    const fetchSaleProducts = async() => {
+    const fetchSaleProducts = async () => {
       try {
-        const response = await axios.get(`http://78.13.0.202:8080/sales/${id}/products`);
+        const response = await axios.get(
+          `http://78.13.0.202:8080/sales/${id}/products`
+        );
         setSaleProducts(response.data);
-        console.log("Se obtuvo los productos de la venta correctamente: ", response.data);
+        console.log(
+          'Se obtuvo los productos de la venta correctamente: ',
+          response.data
+        );
       } catch (error) {
-        console.error("No se obtuvo los prodcutos de venta la correctamente: ", error)
+        console.error(
+          'No se obtuvo los prodcutos de venta la correctamente: ',
+          error
+        );
       }
-    }
+    };
 
     fetchSales();
     fetchSaleProducts();
-
-  }, [])
+  }, []);
 
   useEffect(() => {
-
-    const fetchProduct = async(product_id: number) => {
+    const fetchProduct = async (product_id: number) => {
       try {
-        const response = await axios.get(`http://78.13.0.202:8080/products/${product_id}`);
-        console.log("Se obtuvo el producto correctamente: ", response.data);
+        const response = await axios.get(
+          `http://78.13.0.202:8080/products/${product_id}`
+        );
+        console.log('Se obtuvo el producto correctamente: ', response.data);
 
         return response.data;
       } catch (error) {
-        console.error("No se obtuvo el producto correctamente: ", error)
+        console.error('No se obtuvo el producto correctamente: ', error);
         return null;
       }
-    }
+    };
 
-    
     const fetchAllProducts = async () => {
       const updatedProducts = await Promise.all(
         saleProducts.map(async (item) => {
@@ -138,39 +150,48 @@ const SaleDetail = () => {
           return { ...item, ...product };
         })
       );
-  
+
       setSaleCart(updatedProducts);
     };
 
     fetchAllProducts();
-
-
-  }, [sale, saleProducts])
-
-  
-
+  }, [sale, saleProducts]);
 
   const saleProductsColumns = [
-  { header: 'Producto', key: 'description' },
-  { header: 'Cantidad', key: 'quantity' },
-  { header: 'Precio Unitario', key: 'sale_price', render: (row: ItemCart) => `$${row.sale_price.toFixed(2)}` },
-  { header: 'Subtotal', key: 'sale_subtotal', render: (row: ItemCart) => `$${(row.quantity * row.sale_price).toFixed(2)}` }
-];
+    { header: 'Producto', key: 'description' },
+    { header: 'Cantidad', key: 'quantity' },
+    {
+      header: 'Precio Unitario',
+      key: 'sale_price',
+      render: (row: ItemCart) => `$${row.sale_price.toFixed(2)}`,
+    },
+    {
+      header: 'Subtotal',
+      key: 'sale_subtotal',
+      render: (row: ItemCart) =>
+        `$${(row.quantity * row.sale_price).toFixed(2)}`,
+    },
+  ];
 
-const prevSale = () => {
-const prevId = sale && sale.id ? sale.id - 1 : 0;
-  if (prevId > 0) {
-    navigate(`/ventas/${prevId}`);
-  }
-};
+  const prevSale = () => {
+    const prevId = sale && sale.id ? sale.id - 1 : 0;
+    if (prevId > 0) {
+      navigate(`/ventas/${prevId}`);
+    }
+  };
 
-const nextSale = () => {
-  const nextId = (sale?.id ?? 0) + 1;
-  navigate(`/ventas/${nextId}`);
-};
+  const nextSale = () => {
+    const nextId = (sale?.id ?? 0) + 1;
+    navigate(`/ventas/${nextId}`);
+  };
 
   // Función para calcular la posición X para justificar a la derecha
-  const getRightAlignX = (doc: jsPDF, text: string, marginRight = 2, pageWidth = 80) => {
+  const getRightAlignX = (
+    doc: jsPDF,
+    text: string,
+    marginRight = 2,
+    pageWidth = 80
+  ) => {
     const textWidth = doc.getTextWidth(text); // Medir el ancho del texto
     return pageWidth - textWidth - marginRight; // Posición X para alinear a la derecha
   };
@@ -181,9 +202,8 @@ const nextSale = () => {
     return (pageWidth - textWidth) / 2; // Posición X para centrar el texto
   };
 
-
   const generateTicket = (data: TicketData) => {
-    const doc = new jsPDF("p", "mm", [80, 297]); // Ancho de 80mm, Alto ajustable (similar a un A4)
+    const doc = new jsPDF('p', 'mm', [80, 297]); // Ancho de 80mm, Alto ajustable (similar a un A4)
 
     const imageWidth = 30; // Ancho de la imagen
     const pageWidth = 80; // Ancho de la página
@@ -192,19 +212,19 @@ const nextSale = () => {
     const xPosition = (pageWidth - imageWidth) / 2;
 
     // Agregar logo centrado
-    doc.addImage(logo, "PNG", xPosition, 2, imageWidth, 20); // Dinamico
-    
+    doc.addImage(logo, 'PNG', xPosition, 2, imageWidth, 20); // Dinamico
+
     // Información del negocio
-    doc.setFont("helvetica", "normal");
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
 
     // Centrar textos
-    const companyName = data.companyName;  // Dinamico
+    const companyName = data.companyName; // Dinamico
     const address = data.address; //Dinamico
     const postalCode = data.postalCode; //Dinamico
-    const phoneNumber = "TEL: " + data.phoneNumber; //Dinamico
-    const seller = "ATENDIO: " + data.seller; // Dinamico
-    const ticketNumber = "NO. " + data.ticketNumber; //Dinamico
+    const phoneNumber = 'TEL: ' + data.phoneNumber; //Dinamico
+    const seller = 'ATENDIO: ' + data.seller; // Dinamico
+    const ticketNumber = 'NO. ' + data.ticketNumber; //Dinamico
     const date = data.date; //Dinamico
     const clientNumber = data.clientNumber; //Dinamico
     const clientName = data.clientName; //Dinamico
@@ -218,8 +238,8 @@ const nextSale = () => {
     const cashAmount = data.cashAmount; //Dinamico
 
     // Términos y condiciones, información del sitio web
-    const termsText = "AL PAGAR ACEPTO LOS TERMINOS DE VENTA";
-    const returnPolicyText = "DEVOLUCION Y GARANTÍA EXHIBIDOS EN TIENDA";
+    const termsText = 'AL PAGAR ACEPTO LOS TERMINOS DE VENTA';
+    const returnPolicyText = 'DEVOLUCION Y GARANTÍA EXHIBIDOS EN TIENDA';
     const websiteText = data.website; //Dinamico
 
     // Usamos getCenterAlignX para calcular las posiciones centradas
@@ -253,7 +273,7 @@ const nextSale = () => {
     yPosition += 5;
     doc.text(phoneNumber, xPositionPhone, yPosition); // Teléfono
     yPosition += 5; // Se agrega un espacio extra después de la información del negocio
-    
+
     // Nombre del vendedor
     doc.text(seller, xPositionSeller, yPosition); // Vendedor
     yPosition += 10;
@@ -273,7 +293,7 @@ const nextSale = () => {
 
     // Detalles de los productos
     data.products.forEach((cartItem) => {
-      const productText = `${cartItem.quantity.toFixed(2)}` + " - ";
+      const productText = `${cartItem.quantity.toFixed(2)}` + ' - ';
       const skuText = `${cartItem.id}`;
       const descriptionText = ` ${cartItem.description}`;
 
@@ -281,17 +301,21 @@ const nextSale = () => {
       doc.text(productText, 2, yPosition);
 
       // SKU en negritas
-      doc.setFont("helvetica", "bold");
+      doc.setFont('helvetica', 'bold');
       doc.text(skuText, doc.getTextWidth(productText) + 2, yPosition);
 
       // Volver a fuente normal y mostrar la descripción
-      doc.setFont("helvetica", "normal");
-      doc.text(descriptionText, doc.getTextWidth(productText + skuText) + 4, yPosition);
+      doc.setFont('helvetica', 'normal');
+      doc.text(
+        descriptionText,
+        doc.getTextWidth(productText + skuText) + 4,
+        yPosition
+      );
 
       // Mostrar precio alineado a la derecha
       const totalProduct = `${cartItem.sale_price.toFixed(2)}`;
       const xPositionTotalProduct = getRightAlignX(doc, totalProduct);
-      doc.text(totalProduct, xPositionTotalProduct, yPosition); 
+      doc.text(totalProduct, xPositionTotalProduct, yPosition);
 
       yPosition += 5; // Incrementar la posición para el siguiente producto
     });
@@ -299,35 +323,35 @@ const nextSale = () => {
     // Separador
     doc.line(2, yPosition, 78, yPosition); // Línea de separación
     yPosition += 5;
-    
+
     // Subtotales, descuentos, impuestos
-    doc.text("Subtotal:", 2, yPosition);
+    doc.text('Subtotal:', 2, yPosition);
     doc.text(subtotalAmount, xPositionSubtotal, yPosition);
     yPosition += 5;
-    doc.text("Descuento:", 2, yPosition);
+    doc.text('Descuento:', 2, yPosition);
     doc.text(discountAmount, xPositionDiscount, yPosition);
     yPosition += 5;
-    doc.text("Impuestos:", 2, yPosition);
+    doc.text('Impuestos:', 2, yPosition);
     doc.text(taxesAmount, xPositionTaxes, yPosition);
     yPosition += 5;
 
     // Línea de total
     doc.line(2, yPosition, 78, yPosition); // Línea de separación
     yPosition += 5;
-    doc.text("Total:", 2, yPosition);
+    doc.text('Total:', 2, yPosition);
     doc.text(totalAmount, xPositionTotal, yPosition);
     yPosition += 5;
     doc.line(2, yPosition, 78, yPosition);
     yPosition += 5;
-    doc.text("Su pago:", 2, yPosition);
+    doc.text('Su pago:', 2, yPosition);
     doc.text(paymentAmount, xPositionPayment, yPosition);
     yPosition += 5;
-    doc.text("Su cambio:", 2, yPosition);
+    doc.text('Su cambio:', 2, yPosition);
     doc.text(changeAmount, xPositionChange, yPosition);
     yPosition += 5;
-    
+
     // Detalles de pago en efectivo
-    doc.text("Efectivo", 2, yPosition);
+    doc.text('Efectivo', 2, yPosition);
     doc.text(cashAmount, xPositionCash, yPosition);
     yPosition += 5;
 
@@ -336,7 +360,7 @@ const nextSale = () => {
     yPosition += 5;
 
     // Nota
-    doc.text("Nota:", 2, yPosition); // Nota
+    doc.text('Nota:', 2, yPosition); // Nota
     yPosition += 5;
 
     // Imprimir los textos centrados
@@ -345,7 +369,7 @@ const nextSale = () => {
     doc.text(returnPolicyText, xPositionPolicy, yPosition); // Política de devoluciones
     yPosition += 5;
     doc.text(websiteText, xPositionWebsite, yPosition); // Sitio web
-    
+
     // Imprimir el documento
     //doc.autoPrint(); // Esto abrirá el cuadro de impresión
     //doc.output("dataurlnewwindow"); // Opcional: abre el ticket en una nueva ventana
@@ -354,44 +378,47 @@ const nextSale = () => {
 
   const printSale = (data: Sale) => {
     if (!saleProducts || saleProducts.length === 0) {
-      console.error("No hay datos de venta o carrito para imprimir.");
+      console.error('No hay datos de venta o carrito para imprimir.');
       return;
     }
-  
-    const company_name = JSON.parse(localStorage.getItem("user_company_name") || '""');
-    const user = (JSON.parse(localStorage.getItem("user_name") || "")) + " " +
-      (JSON.parse(localStorage.getItem("user_lastname") || ""));
-  
+
+    const company_name = JSON.parse(
+      localStorage.getItem('user_company_name') || '""'
+    );
+    const user =
+      JSON.parse(localStorage.getItem('user_name') || '') +
+      ' ' +
+      JSON.parse(localStorage.getItem('user_lastname') || '');
+
     const ticketData = {
       companyName: company_name,
-      address: "Av. Benito Juarez 100 Centro",
-      postalCode: "CP. 22000 Tijuana Baja California Norte",
-      phoneNumber: "(771) 4834386",
+      address: 'Av. Benito Juarez 100 Centro',
+      postalCode: 'CP. 22000 Tijuana Baja California Norte',
+      phoneNumber: '(771) 4834386',
       seller: user,
       ticketNumber: `${data.id}`,
       date: `${data.created_at}`,
-      clientNumber: "", // pending
-      clientName: "", // pending
+      clientNumber: '', // pending
+      clientName: '', // pending
       subtotalAmount: `${data.subtotal}`,
-      discountAmount: "$00.00",
-      taxesAmount: "$00.00",
+      discountAmount: '$00.00',
+      taxesAmount: '$00.00',
       totalAmount: `${data.total}`,
       paymentAmount: `$00.00`,
       changeAmount: `$00.00`,
       cashAmount: `${data.total}`,
-      website: "WWW.FIXOEM.COM", //moddify
+      website: 'WWW.FIXOEM.COM', //moddify
       products: saleCart,
     };
-  
+
     console.log(ticketData);
     generateTicket(ticketData);
-
   };
 
   const downloadSale = () => {
     const saleDataStr = JSON.stringify(sale, null, 2);
-    const blob = new Blob([saleDataStr], { type: "application/json" });
-    const link = document.createElement("a");
+    const blob = new Blob([saleDataStr], { type: 'application/json' });
+    const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `venta-${id}.json`;
     document.body.appendChild(link);
@@ -399,84 +426,166 @@ const nextSale = () => {
     document.body.removeChild(link);
   };
 
-
-
-
   return (
-    <Container fluid style={{ height: '100%'}}>
-      <Row style={{ height: '10%' }} >
+    <Container fluid style={{ height: '100%' }}>
+      <Row style={{ height: '10%' }}>
         <CustomNavbar
           actions={
             <>
-              <Button variant='secondary' onClick={() => { if (sale) printSale(sale) }} style={{ cursor: 'pointer' }}>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  if (sale) printSale(sale);
+                }}
+                style={{ cursor: 'pointer' }}
+              >
                 <FaPrint size={12} />
               </Button>
-              <Button variant='secondary' onClick={downloadSale} style={{ cursor: 'pointer' }}>
+              <Button
+                variant="secondary"
+                onClick={downloadSale}
+                style={{ cursor: 'pointer' }}
+              >
                 <FaDownload size={12} />
               </Button>
-              <Button variant='secondary' onClick={prevSale} style={{  cursor: 'pointer' }}>
+              <Button
+                variant="secondary"
+                onClick={prevSale}
+                style={{ cursor: 'pointer' }}
+              >
                 <FaArrowLeft size={12} />
               </Button>
-              <Button variant='secondary' onClick={nextSale} style={{  cursor: 'pointer' }}>
+              <Button
+                variant="secondary"
+                onClick={nextSale}
+                style={{ cursor: 'pointer' }}
+              >
                 <FaArrowRight size={12} />
               </Button>
-              <Button  variant="secondary" onClick={() => navigate(-1)} className="secondary">
+              <Button
+                variant="secondary"
+                onClick={() => navigate(-1)}
+                className="secondary"
+              >
                 Volver
               </Button>
             </>
           }
         />
       </Row>
-      <Row style={{ height: '90%', padding: '15px 0' }}>
-          
-          <Col md={4} className='ps-5 pe-5'>
-            {/* Encabezado con iconos de navegación */}
-            
-            <div style={{ display: 'flex', alignItems: 'center', margin: '0 0 20px 0', gap: '50px'   }}>
-              <div className='box-main-icon'>
-                <FaReceipt color="#F25C05" size={24} />
-              </div>
-              <h2 style={{ textAlign: 'start', margin: '0' }}># {id}</h2>
-            </div>
-            
-              
+      <Row
+        style={{
+          height: 'calc(80% - 40px)',
+          marginBlock: '10px',
+          marginTop: '30px',
+        }}
+      >
+        <Col md={4} className="ps-5 pe-5">
+          {/* Encabezado con iconos de navegación */}
 
-            {/* Información de la venta */}
-            <div style={{ display: 'grid', width: '100%', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'start' }}>
-                <strong style={{ color: "#666", fontSize: '14px' }}>Fecha:</strong> 
-                <strong>{sale?.created_at.toLocaleString()}</strong>
-              </div>
-              <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'start' }}>
-                <strong style={{ color: "#666", fontSize: '14px' }}>Vendedor:</strong> 
-                <strong>{}</strong>
-              </div>
-              <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'start' }}>
-                <strong style={{ color: "#666", fontSize: '14px' }}>Método de Pago:</strong> 
-                <strong>{sale?.payment_method}</strong>
-              </div>
-              <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'start' }}>
-                <strong style={{ color: "#666", fontSize: '14px' }}>Sucursal:</strong> 
-                <strong>{}</strong>
-              </div>
-              <div style={{ display: 'flex', flexFlow: 'column', textAlign: 'start' }}>
-                <strong style={{ color: "#666", fontSize: '14px' }}>Importe total:</strong> 
-                <strong>${sale?.total.toFixed(2)}</strong>
-              </div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              margin: '0 0 20px 0',
+              gap: '50px',
+            }}
+          >
+            <div className="box-main-icon">
+              <FaReceipt color="#F25C05" size={24} />
             </div>
+            <h2 style={{ textAlign: 'start', margin: '0' }}># {id}</h2>
+          </div>
 
-        
-          </Col>
-
-          <Col md={8}>
-            <div style={{ display: 'flex', alignItems: 'center', margin: 'auto', gap: '50px', width: '85%'  }}>
-              <div className='box-main-icon'>
-                <FaListAlt  color="#F25C05" size={24} />
-              </div>
-              <h2 style={{ textAlign: 'start'}} >Detalles</h2>
+          {/* Información de la venta */}
+          <div
+            style={{
+              display: 'grid',
+              width: '100%',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column',
+                textAlign: 'start',
+              }}
+            >
+              <strong style={{ color: '#666', fontSize: '14px' }}>
+                Fecha:
+              </strong>
+              <strong>{sale?.created_at.toLocaleString()}</strong>
             </div>
-            <UniversalTable columns={saleProductsColumns} data={saleCart} />;
-          </Col>
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column',
+                textAlign: 'start',
+              }}
+            >
+              <strong style={{ color: '#666', fontSize: '14px' }}>
+                Vendedor:
+              </strong>
+              <strong>{}</strong>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column',
+                textAlign: 'start',
+              }}
+            >
+              <strong style={{ color: '#666', fontSize: '14px' }}>
+                Método de Pago:
+              </strong>
+              <strong>{sale?.payment_method}</strong>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column',
+                textAlign: 'start',
+              }}
+            >
+              <strong style={{ color: '#666', fontSize: '14px' }}>
+                Sucursal:
+              </strong>
+              <strong>{}</strong>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column',
+                textAlign: 'start',
+              }}
+            >
+              <strong style={{ color: '#666', fontSize: '14px' }}>
+                Importe total:
+              </strong>
+              <strong>${sale?.total.toFixed(2)}</strong>
+            </div>
+          </div>
+        </Col>
+
+        <Col md={8}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              margin: 'auto',
+              gap: '50px',
+              width: '85%',
+            }}
+          >
+            <div className="box-main-icon">
+              <FaListAlt color="#F25C05" size={24} />
+            </div>
+            <h2 style={{ textAlign: 'start' }}>Detalles</h2>
+          </div>
+          <UniversalTable columns={saleProductsColumns} data={saleCart} />;
+        </Col>
       </Row>
     </Container>
   );

@@ -92,7 +92,12 @@ export default function Inventory(){
           <CustomNavbar actions={<></>} />
         </Row>
 
-        <Row style={{ height: '90%' }} >
+        <Row style={{
+            height: 'calc(90% - 30px)',
+            marginBlock: '10px',
+            marginTop: '30px',
+          }} 
+        >
           <UniversalTable columns={inventoryColumns} data={inventoryData} />
         </Row>
       </Container>

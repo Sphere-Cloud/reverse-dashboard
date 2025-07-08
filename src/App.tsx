@@ -10,6 +10,7 @@ import PointOfSale from './pages/PointOfSale';
 import PointOfSales from './pages/PointOfSales';
 import SaleDetail from './pages/SaleDetail';
 import CashOut from './pages/CashOut';
+import Products from './pages/Products';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -34,6 +35,8 @@ const App = () => {
 
           <Route path="/ventas" element={<Sales />} />
           <Route path="/ventas/:id" element={<SaleDetail />} />
+
+          <Route path="productos" element={<Products/>} />
 
           <Route path="/inventario" element={<Inventory />} />
           <Route path="/inventario/:id" element={<Inventory />} />

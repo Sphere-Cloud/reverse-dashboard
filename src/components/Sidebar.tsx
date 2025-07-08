@@ -70,6 +70,7 @@ const Sidebar = ({ show, handleClose }: SidebarProps) => {
             <span>Ventas</span>
             <FaShoppingCart className="ms-2" size={25} /> {/* Ícono a la derecha */}
           </Nav.Link>
+
           <Nav.Link
             as={Link}
             to="/inventario"
@@ -81,6 +82,19 @@ const Sidebar = ({ show, handleClose }: SidebarProps) => {
             <span>Inventario</span>
             <FaBoxes className="ms-2" size={25} /> {/* Ícono a la derecha */}
           </Nav.Link>
+
+          <Nav.Link
+            as={Link}
+            to="/productos"
+            onClick={handleClose}
+            className={`d-flex justify-content-between align-items-center ${
+              location.pathname === '/productos' ? 'active' : ''
+            }`}
+          >
+            <span>Productos</span>
+            <FaBoxes className="ms-2" size={25} /> {/* Ícono a la derecha */}
+          </Nav.Link>
+
           <Nav.Link
             as={Link}
             to="/usuarios"
