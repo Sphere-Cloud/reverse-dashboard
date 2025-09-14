@@ -112,7 +112,7 @@ const ProductList = ({ products, addToCart }: ProductListProps) => {
 // Función para obtener los inventarios de un producto
 async function fetchProductInventories(productId: number): Promise<Inventory[]> {
   try {
-    const response = await axios.get(`http://78.13.0.202:8080/products/${productId}/inventories`);
+    const response = await axios.get(`http://localhost:8080/products/${productId}/inventories`);
     return response.data;
   } catch (error) {
     console.error('Error fetching product inventories:', error);

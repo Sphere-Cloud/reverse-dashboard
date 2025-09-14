@@ -51,7 +51,6 @@ const Modal = ({ content, buttonGroup, title, show, handlers }: ModalProps) => {
             alignItems: 'center',
             borderBottom: '1px solid #ddd',
             padding: '20px',
-            background: 'rgb(242, 92, 5, 10%)'
           }}
         >
           <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>

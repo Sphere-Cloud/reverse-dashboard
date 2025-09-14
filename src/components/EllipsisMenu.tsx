@@ -29,7 +29,7 @@ const EllipsisMenu = ({ items }: EllipsisMenuProps) => {
           }}
         >
           {items.map((item) => (
-            <div className="option" key={item.id} style={{ cursor: 'pointer' }} onClick={item.action}>
+            <div className="option" key={item.id} style={{ cursor: 'pointer', fontFamily: 'Inter Variable' }} onClick={item.action}>
               {item.name}
             </div>
           ))}

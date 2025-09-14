@@ -84,7 +84,7 @@ const Cart = ({ cart, removeFromCart, increaseQuantity, decreaseQuantity, handle
         <h6 className="total-label">Total:</h6>
         <span className="total-amount">${total.toFixed(2)}</span>
         </div>
-        <Button style={{ width: '100%', margin: '10px 0 0 0', background: '#F25C05', borderColor: '#F25C05' }} onClick={handlePayment}> PAGAR </Button>
+        <Button style={{ width: '100%', margin: '10px 0 0 0', background: '#0741DD', borderColor: '#0741DD' }} onClick={handlePayment}> PAGAR </Button>
       </div>
     </Container>
   );

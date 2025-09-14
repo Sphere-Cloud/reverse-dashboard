@@ -74,7 +74,7 @@ const AddPointOfSale = ({ show, onClose, AddPointOfSale }: AddPointOfSaleProps) 
     
     return(
         <Modal
-            title='Agregar Punto de Venta'
+            title='Punto de Venta'
             show={show}
             buttonGroup={
             <>
@@ -97,11 +97,11 @@ const AddPointOfSale = ({ show, onClose, AddPointOfSale }: AddPointOfSaleProps) 
                 <Form style={{ padding: '0 15px' }}>
                     { error && <Alert variant='danger' >{error}</Alert> }
                     <Form.Group>
-                        <Form.Label style={{ width: '100%', textAlign: 'start', fontWeight: '500' }}>Nombre del Punto de Venta</Form.Label>
+                        <Form.Label style={{ width: '100%', textAlign: 'start', fontWeight: '500' }}>Nombre</Form.Label>
                         <InputGroup>
                             <Form.Control
                                 type="text"
-                                placeholder="Nombre del Punto de Venta"
+                                placeholder="Sucursal 1"
                                 value={pointOfSale.POSName}
                                 onChange={(e) => setPointOfSale({ ...pointOfSale, POSName: e.target.value })}
                             />

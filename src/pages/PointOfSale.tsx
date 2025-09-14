@@ -107,7 +107,7 @@ const PointOfSale = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://78.13.0.202:8080/products`);
+        const response = await axios.get(`http://localhost:8080/products`);
         if (response.data == null) {
           setProducts([]);
         } else {
@@ -267,7 +267,7 @@ const PointOfSale = () => {
       };
 
       const saleResponse = await axios.post(
-        'http://78.13.0.202:8080/sales',
+        'http://localhost:8080/sales',
         salePayload
       );
       const sale = saleResponse.data;
@@ -290,7 +290,7 @@ const PointOfSale = () => {
         };
 
         return axios.post(
-          'http://78.13.0.202:8080/sale-products',
+          'http://localhost:8080/sale-products',
           productPayload
         );
       });

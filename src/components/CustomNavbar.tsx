@@ -49,7 +49,7 @@ const CustomNavbar = ({actions}: {actions: any}) => {
       if (!localStorage.getItem("user_role")) {
         try {
           // Espera la respuesta de la solicitud
-          const response = await axios.get(`http://78.13.0.202:8080/roles/${userRoleId}`);
+          const response = await axios.get(`http://localhost:8080/roles/${userRoleId}`);
           
           // Guardar el role_id en el localStorage
           localStorage.setItem("user_role", JSON.stringify(response.data.title));
@@ -70,7 +70,7 @@ const CustomNavbar = ({actions}: {actions: any}) => {
       if (!localStorage.getItem("user_company_name")) {
         try {
           // Espera la respuesta de la solicitud
-          const response = await axios.get(`http://78.13.0.202:8080/companies/${userCompanyId}`);
+          const response = await axios.get(`http://localhost:8080/companies/${userCompanyId}`);
           
           // Guardar el role_id en el localStorage
           localStorage.setItem("user_company_name", JSON.stringify(response.data.name));
@@ -99,7 +99,7 @@ const CustomNavbar = ({actions}: {actions: any}) => {
             variant="outline-primary"
             onClick={handleShowSidebar}
             className="me-3 custom-hover-btn"
-            style={{ color: ' #F25C05', borderColor: ' #F25C05' }}
+            style={{ color: ' #0741DD', borderColor: ' #0741DD', borderRadius: '0' }}
           >
             <FaBars /> {/* Ícono de hamburguesa */}
           </Button>
@@ -113,7 +113,7 @@ const CustomNavbar = ({actions}: {actions: any}) => {
           <div className="d-flex align-items-center ms-auto">
             {/* Botón de pantalla completa */}
             <Button
-              variant="outline-secondary"
+              variant="secondary"
               onClick={handleFullscreen}
               className="me-3"
             >

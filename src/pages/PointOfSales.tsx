@@ -44,7 +44,7 @@ const PointOfSales = () => {
                 variant="secondary"
                 onClick={handleOpenNewPointOfSale}
               >
-                Agregar Punto de Venta
+                Nuevo
               </Button>
             </>
           } 

@@ -98,7 +98,7 @@ const SaleDetail = () => {
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const response = await axios.get(`http://78.13.0.202:8080/sales/${id}`);
+        const response = await axios.get(`http://localhost:8080/sales/${id}`);
         setSale(response.data);
         console.log('Se obtuvo las venta correctamente: ', response.data);
       } catch (error) {
@@ -109,7 +109,7 @@ const SaleDetail = () => {
     const fetchSaleProducts = async () => {
       try {
         const response = await axios.get(
-          `http://78.13.0.202:8080/sales/${id}/products`
+          `http://localhost:8080/sales/${id}/products`
         );
         setSaleProducts(response.data);
         console.log(
@@ -132,7 +132,7 @@ const SaleDetail = () => {
     const fetchProduct = async (product_id: number) => {
       try {
         const response = await axios.get(
-          `http://78.13.0.202:8080/products/${product_id}`
+          `http://localhost:8080/products/${product_id}`
         );
         console.log('Se obtuvo el producto correctamente: ', response.data);
 
@@ -492,7 +492,7 @@ const SaleDetail = () => {
             }}
           >
             <div className="box-main-icon">
-              <FaReceipt color="#F25C05" size={24} />
+              <FaReceipt color="#0741DD" size={24} />
             </div>
             <h2 style={{ textAlign: 'start', margin: '0' }}># {id}</h2>
           </div>
@@ -580,7 +580,7 @@ const SaleDetail = () => {
             }}
           >
             <div className="box-main-icon">
-              <FaListAlt color="#F25C05" size={24} />
+              <FaListAlt color="#0741DD" size={24} />
             </div>
             <h2 style={{ textAlign: 'start' }}>Detalles</h2>
           </div>

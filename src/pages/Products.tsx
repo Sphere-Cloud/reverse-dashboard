@@ -24,7 +24,7 @@ function Products() {
 
     const getProducts = async () => {
         try {
-            const response = await axios.get('http://78.13.0.202:8080/products');
+            const response = await axios.get('http://localhost:8080/products');
             setProducts(response.data)
             console.log('Se obtuvo los productos correctamente');
         } catch (error) {

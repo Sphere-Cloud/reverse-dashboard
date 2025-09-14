@@ -53,7 +53,7 @@ export default function Users() {
     const fetchUsers = async() => {
       try {
 
-        const response = await axios.get("http://78.13.0.202:8080/users");
+        const response = await axios.get("http://localhost:8080/users");
         setUsersData(response.data)
 
         console.log("Se obtuvo usuarios correctamente: ", response.data); 
@@ -65,7 +65,7 @@ export default function Users() {
 
     const fetchRoles = async() => {
       try {
-        const response = await axios.get("http://78.13.0.202:8080/roles");
+        const response = await axios.get("http://localhost:8080/roles");
         setRoles(response.data);
 
         console.log("Se obtuvo usuarios correctamente: ", response.data);
@@ -139,7 +139,7 @@ export default function Users() {
     console.log(payload);
 
     try {
-      const response = await axios.post("http://78.13.0.202:8080/users", payload)
+      const response = await axios.post("http://localhost:8080/users", payload)
       setUsersData( (prevData) => [...prevData, response.data] );
 
       const userRole = roles.find((role) => role.id === response.data.role_id);

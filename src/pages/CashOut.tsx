@@ -285,7 +285,7 @@ const CashOut = () => {
                     newCashout ? 
                     (
                       <div style={{ width:'100%', display: 'flex', flexFlow: 'column', height: '100%' }}>
-                        <div style={{ height: '90px', background: '#F25C05', display: 'flex', alignItems: 'center', justifyContent: 'center' }}> 
+                        <div style={{ height: '90px', background: '#0741DD', display: 'flex', alignItems: 'center', justifyContent: 'center' }}> 
                             <strong style={{ color: 'white' }}> ARQUEO DE VENTA </strong>
                         </div>
 
@@ -437,7 +437,7 @@ const CashOut = () => {
                         
 
                         <div style={{ width: '100%', margin: 'auto 0 0 0', padding: '10px' }}>
-                            <Button style={{ width: '100%', margin: '10px 0 0 0', background: '#F25C05', borderColor: '#F25C05' }} onClick={handleFinishPayment}> FINALIZAR ARQUEO </Button>
+                            <Button style={{ width: '100%', margin: '10px 0 0 0', background: '#0741DD', borderColor: '#0741DD' }} onClick={handleFinishPayment}> FINALIZAR ARQUEO </Button>
                         </div>
                       </div>
                     ) 

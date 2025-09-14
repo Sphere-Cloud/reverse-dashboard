@@ -42,7 +42,7 @@ const UserDetail = ({ show, handleClose }: SidebarProps) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`http://78.13.0.202:8080/users/${id}`);
+        const response = await axios.get(`http://localhost:8080/users/${id}`);
         setUser(response.data);
         console.log("Usuario obtenido correctamente:", response.data);
       } catch (error) {
@@ -52,7 +52,7 @@ const UserDetail = ({ show, handleClose }: SidebarProps) => {
 
     const fetchRoles = async () => {
       try {
-        const response = await axios.get("http://78.13.0.202:8080/roles");
+        const response = await axios.get("http://localhost:8080/roles");
         setRoles(response.data);
         console.log("Roles obtenidos correctamente:", response.data);
       } catch (error) {
@@ -82,7 +82,7 @@ const UserDetail = ({ show, handleClose }: SidebarProps) => {
     if (!id) return;
   
     try {
-      await axios.delete(`http://78.13.0.202:8080/users/${id}`);
+      await axios.delete(`http://localhost:8080/users/${id}`);
       console.log(`Usuario con ID ${id} eliminado correctamente.`);
       
       // Aquí podrías actualizar la lista de usuarios o cerrar el modal

@@ -113,22 +113,27 @@ strong, b {
 /*Secondary*/
 
 .btn-primary {
-  background: #F25C05 !important;
-  border: 1px solid #F25C05 !important;
+  border-radius: 0px !important;
+  background: #0741DD !important;
+  border: 1px solid #0741DD !important;
   color: white !important;
   cursor: pointer !important;
 }
 
 .btn-secondary {
+  border-radius: 0px !important;
   background: transparent !important;
-  border: 1px solid #F25C05 !important;
-  font-size: 12px !important;
-  color: #F25C05 !important;
+  border: 1px solid #0741DD !important;
+  color: #0741DD !important;
   cursor: pointer !important;
 }
 
 .btn-secondary:hover {
-  background: #F25C05 !important;
-  border: 1px solid #F25C05 !important;
+  background: #0741DD !important;
+  border: 1px solid #0741DD !important;
   color: white !important;
+}
+
+.outline-secondary{
+  border-radius: 0px !important;
 }

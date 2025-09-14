@@ -16,13 +16,13 @@
 }
 
 .product-container::-webkit-scrollbar-thumb {
-    background: #F25C05; /* Color naranja del scroll */
+    background: #0741DD; /* Color naranja del scroll */
     border-radius: 10px;
     border: 2px solid #f5f5f5; /* Borde del scroll para hacerlo más delgado */
 }
 
 .product-container::-webkit-scrollbar-thumb:hover {
-    background: #F25C05; /* Un tono más oscuro al hacer hover */
+    background: #0741DD; /* Un tono más oscuro al hacer hover */
 }
 
 .list-item{
@@ -32,5 +32,5 @@
 }
 
 .list-item:hover{
-    border-color: #F25C05 !important;
+    border-color: #0741DD !important;
 }

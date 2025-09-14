@@ -104,7 +104,7 @@ const CardPOS = ({
           <strong> {POSName} </strong>
           <div>
             <strong
-              style={{ fontSize: '9px', background: 'rgb(242, 92, 5, 50%)' }}
+              style={{ fontSize: '9px', background: '#0741DD', color: 'white' }}
             >
               {statusPointOfSale ? 'ABIERTO' : 'CERRADO'}
             </strong>
@@ -162,7 +162,7 @@ const CardPOS = ({
         {statusPointOfSale && (
           <Button
             onClick={handleClosePos}
-            variant="outline-secondary"
+            variant="secondary"
             style={{ width: '100%' }}
           >
             CERRAR CAJA

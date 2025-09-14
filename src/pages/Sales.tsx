@@ -26,7 +26,7 @@ const Sales = () => {
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const response = await axios.get('http://78.13.0.202:8080/sales');
+        const response = await axios.get('http://localhost:8080/sales');
         setSales(response.data);
         console.log('Se obtuvo las ventas correctamente: ', response.data);
       } catch (error) {

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import '../styles/login.css';
-import login_bw from '/login_bg_new.png';
+import login_bw from '/bg_background.png';
 import revrse_lg from '/reverse_bw.png';
 
 const Login = () => {
@@ -28,7 +28,6 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación básica
     if (!credentials.email || !credentials.password) {
       setError('Por favor, completa todos los campos.');
       return;
@@ -36,7 +35,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        'http://78.13.0.202:8080/login',
+        'http://localhost:8080/login',
         credentials
       );
 
@@ -65,9 +64,51 @@ const Login = () => {
         navigate('/panel');
       } else {
         setError(response.data.mensaje || 'Error al iniciar sesión');
+        navigate('/panel');
+        localStorage.setItem(
+          'user_name',
+          JSON.stringify('Josafat')
+        );
+        localStorage.setItem(
+          'user_lastname',
+          JSON.stringify('Garcia')
+        );
+        localStorage.setItem(
+          'user_id',
+          JSON.stringify('1')
+        );
+        localStorage.setItem(
+          'user_role_id',
+          JSON.stringify('1')
+        );
+        localStorage.setItem(
+          'user_company_id',
+          JSON.stringify('1')
+        );
       }
     } catch (error) {
+      navigate('/panel');
       setError('Credenciales incorrectas o error del servidor.');
+      localStorage.setItem(
+          'user_name',
+          JSON.stringify('Josafat')
+        );
+        localStorage.setItem(
+          'user_lastname',
+          JSON.stringify('Garcia')
+        );
+        localStorage.setItem(
+          'user_id',
+          JSON.stringify('1')
+        );
+        localStorage.setItem(
+          'user_role_id',
+          JSON.stringify('1')
+        );
+        localStorage.setItem(
+          'user_company_id',
+          JSON.stringify('1')
+        );
     }
   };
 

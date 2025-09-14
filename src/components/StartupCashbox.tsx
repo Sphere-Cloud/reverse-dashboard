@@ -129,7 +129,7 @@ const StartupCashbox = ({
                 </div>
             }
             buttonGroup={
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
                     <Button 
                         variant="outline-secondary" 
                         onClick={onClose}

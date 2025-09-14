@@ -82,10 +82,10 @@
 }
 
 .pagination li a {
-  color: #f25c05;
+  color: #0741DD;
 }
 
 .pagination li.active a {
-  background: #f25c05;
-  border-color: #f25c05;
+  background: #0741DD;
+  border-color: #0741DD;
 }
